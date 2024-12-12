@@ -1,6 +1,5 @@
-import 'dart:io';
-
 import 'package:your_job_offer/domain/model/user.dart';
+import 'package:your_job_offer/domain/model/vacancy.dart';
 
 import '../../domain/repository/user_repository.dart';
 import '../dao/user_dao.dart';
@@ -8,7 +7,9 @@ import '../dao/user_dao.dart';
 class UserRepositoryImpl implements UserRepository {
   final UserDao userDao;
 
-  UserRepositoryImpl(this.userDao,);
+  UserRepositoryImpl(
+    this.userDao,
+  );
 
   @override
   Future<User> getUserFromLocalStorage() async {
@@ -17,8 +18,8 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<User> login(String login, String password) async {
-    User user = await userDao.loginUser(login, password);
+  Future<User> login(User user) async {
+    user = await userDao.loginUser(user);
     await userDao.setUser(user);
     return user;
   }
@@ -28,24 +29,27 @@ class UserRepositoryImpl implements UserRepository {
     await userDao.logout();
   }
 
-
   @override
   Future<User> register(User user) async {
-    User newUser = await userDao.registerUser(user);
-    return newUser;
+    user = await userDao.registerUser(user);
+    await userDao.setUser(user);
+    return user;
   }
 
   @override
-  Future<User> updateUser(User user) async {
-    final updatedUser= await userDao.updateUser(user);
-    return updatedUser;
+  Future<List<Vacancy>> getVacancies(User user) async{
+    return await userDao.getVacancies(user);
   }
 
   @override
-  Future<User> uploadCV(User user, File file) async {
-    final updatedUser= await userDao.uploadCV(user,file);
-    return updatedUser;
+  Future<User> uploadForm(User user) async {
+    user=await userDao.uploadForm(user);
+    await userDao.setUser(user);
+    return user;
   }
 
-
+  @override
+  Future<void> responseToTheVacancy(User user, Vacancy vacancy) async {
+    await userDao.responseToTheVacancy(user, vacancy);
+  }
 }

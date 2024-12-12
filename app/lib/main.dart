@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:your_job_offer/ui/pages/auth_page.dart';
 import 'package:your_job_offer/ui/pages/cv_page.dart';
 import 'package:your_job_offer/ui/pages/form_page.dart';
 import 'package:your_job_offer/ui/pages/home_page.dart';
 import 'package:your_job_offer/ui/pages/login_page.dart';
+import 'package:your_job_offer/ui/pages/profile_page.dart';
 import 'package:your_job_offer/ui/pages/registration_page.dart';
 
 void main() {
@@ -33,14 +35,22 @@ class MyApp extends ConsumerWidget {
               return const RegistrationPage();
             case Pages.home:
               return const HomePage();
-            case Pages.cvUpload:
-              return const CVUploadPage();
+            // case Pages.cvUpload:
+            //   return const CVUploadPage();
             case Pages.form:
               if (arguments is FormArguments) {
                 return FormPage(arguments);
               } else {
                 return const LoginPage();
               }
+            case Pages.profile:
+              return const ProfilePage();
+            case Pages.authHH:
+              return const AuthPage();
+            // case Pages.settings:
+            //   return const SettingsPage();
+            // case Pages.userVacancies:
+            //   return const UserVacancies();
             default:
               return const LoginPage();
           }
@@ -56,4 +66,8 @@ class Pages {
   static const String home = '/home';
   static const String form = '/form';
   static const String cvUpload = '/cvUpload';
+  static const String profile = '/profile';
+  static const String settings = '/settings';
+  static const String userVacancies = '/user_vacancies';
+  static const String authHH= '/authHH';
 }

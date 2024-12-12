@@ -4,6 +4,8 @@ import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';
 
+import '../../main.dart';
+
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
 
@@ -113,6 +115,7 @@ class _AuthPageState extends State<AuthPage> {
             ? ElevatedButton(
           onPressed: () {
             _launchAuthUrl();
+            Navigator.pushReplacementNamed(context, Pages.home);
           },
           child: const Text('Авторизоваться'),
         )

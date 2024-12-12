@@ -12,8 +12,8 @@ class UserState extends _$UserState {
     return await ref.read(userRepositoryProvider).getUserFromLocalStorage();
   }
 
-  Future<User> login(String login, String password) async {
-    final user = await ref.read(userRepositoryProvider).login(login, password);
+  Future<User> login(User user) async {
+    user = await ref.read(userRepositoryProvider).login(user);
     state = AsyncValue.data(user);
     return user;
   }
@@ -30,6 +30,11 @@ class UserState extends _$UserState {
   Future<void> updateUser(User user)async {
     state=AsyncValue.data(user);
     print(state.valueOrNull?.login);
+  }
+
+  Future<void> uploadForm(User user)async {
+    user=await ref.read(userRepositoryProvider).uploadForm(user);
+    state=AsyncValue.data(user);
   }
 
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:your_job_offer/data/dao/user_dao.dart';
 import 'package:your_job_offer/ui/providers/user/user_provider.dart';
 
 import '../../domain/model/user.dart';
@@ -53,10 +52,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               ElevatedButton(
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
-                    final response =await ref.read(userStateProvider.notifier).login(_loginController.text, _passwordController.text);
+                    final response =
+                        await ref.read(userStateProvider.notifier).login(User(
+                              login: _loginController.text,
+                              password: _passwordController.text,
+                            ));
                     print('Логин: ${_loginController.text}');
                     print('Пароль: ${_passwordController.text}');
-                    if(response!=User.getEmptyUser()){
+                    if (response != User.getEmptyUser()) {
                       Navigator.pushReplacementNamed(context, '/home');
                     }
                   }
@@ -83,4 +86,3 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     super.dispose();
   }
 }
-

@@ -5,6 +5,7 @@ import 'package:your_job_offer/ui/providers/user/user_provider.dart';
 
 import '../../domain/model/user.dart';
 import '../../main.dart';
+import 'form_page.dart';
 
 class RegistrationPage extends ConsumerStatefulWidget {
   const RegistrationPage({super.key});
@@ -128,7 +129,6 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       final rawUser = User(
-                          id: "1",
                           login: _loginController.text,
                           password: _passwordController.text,
                           firstName: _firstNameController.text,
@@ -136,12 +136,12 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                           middleName: _patronymicController.text,
                           phone: _phoneController.text,
                           email: _emailController.text,
-                          birthDay: _selectedDate.toString());
+                          birthDate:_selectedDate.toString());
                       final user = await ref
                           .read(userStateProvider.notifier)
                           .register(rawUser);
-                      if (user != User.getEmptyUser() && context.mounted) {
-                        Navigator.pushReplacementNamed(context, Pages.cvUpload);
+                      if (user.login.isNotEmpty && context.mounted) {
+                        Navigator.pushNamed(context, Pages.form, arguments: FormArguments(user: user));
                       }
                     }
                   },
@@ -149,7 +149,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                 ),
                 TextButton(
                   onPressed: () {
-                    Navigator.pushReplacementNamed(context, '/login');
+                    Navigator.pushReplacementNamed(context, Pages.login);
                   },
                   child: Text('Авторизация'),
                 ),
@@ -159,20 +159,6 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
         ),
       ),
     );
-  }
-
-  Future<void> _selectDate() async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-    );
-    if (picked != null && picked != _selectedDate) {
-      setState(() {
-        _selectedDate = picked;
-      });
-    }
   }
 
   @override
