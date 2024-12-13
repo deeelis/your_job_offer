@@ -1,33 +1,28 @@
+import 'package:json_annotation/json_annotation.dart';
+
 import 'enums.dart';
 
+part 'general.g.dart';
 
-class CountryModel {
+@JsonSerializable(explicitToJson: true)
+class Country {
+  @JsonKey(name: 'id')
   int? id;
+  @JsonKey(name: 'name')
   String? name;
+  @JsonKey(name: 'area_id')
   int? area_id;
 
-  CountryModel({
+  Country({
     this.id,
     this.name,
     this.area_id,
   });
 
-  factory CountryModel.fromJson(Map<String, dynamic> json) {
-    return CountryModel(
-      id: json['id'],
-      name: json['name'],
-      area_id: json['area_id'],
-    );
-  }
+  factory Country.fromJson(Map<String, dynamic> json) =>
+      _$CountryFromJson(json);
 
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'areaId': area_id,
-    };
-  }
+  Map<String, dynamic> toJson() => _$CountryToJson(this);
 
   @override
   String toString() {
@@ -35,34 +30,24 @@ class CountryModel {
   }
 }
 
-class CityModel {
+@JsonSerializable(explicitToJson: true)
+class City {
+  @JsonKey(name: 'id')
   int? id;
+  @JsonKey(name: 'name')
   String? name;
+  @JsonKey(name: 'area_id')
   int? area_id;
 
-  CityModel({
+  City({
     this.id,
     this.name,
     this.area_id,
   });
 
+  factory City.fromJson(Map<String, dynamic> json) => _$CityFromJson(json);
 
-  factory CityModel.fromJson(Map<String, dynamic> json) {
-    return CityModel(
-      id: json['id'],
-      name: json['name'],
-      area_id: json['area_id'],
-    );
-  }
-
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'area_id': area_id,
-    };
-  }
+  Map<String, dynamic> toJson() => _$CityToJson(this);
 
   @override
   String toString() {
@@ -70,35 +55,25 @@ class CityModel {
   }
 }
 
-class LanguageModel {
+@JsonSerializable(explicitToJson: true)
+class Language {
+  @JsonKey(name: 'id')
   int? id;
+  @JsonKey(name: 'name')
   String? name;
+  @JsonKey(name: 'level')
   LanguageLevelEnum? level;
 
-  LanguageModel({
+  Language({
     this.id,
     this.name,
     this.level,
   });
 
-  factory LanguageModel.fromJson(Map<String, dynamic> json) {
-    return LanguageModel(
-      id: json['id'],
-      name: json['name'],
-      level: LanguageLevelEnum.values.firstWhere(
-              (e) => e.toString() == 'LanguageLevelEnum.' + json['level'],
-          orElse: () => LanguageLevelEnum.a1), // default value
-    );
-  }
+  factory Language.fromJson(Map<String, dynamic> json) =>
+      _$LanguageFromJson(json);
 
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'level': level.toString().split('.').last,
-    };
-  }
+  Map<String, dynamic> toJson() => _$LanguageToJson(this);
 
   @override
   String toString() {
@@ -106,34 +81,24 @@ class LanguageModel {
   }
 }
 
-class SkillModel {
+@JsonSerializable(explicitToJson: true)
+class Skill {
+  @JsonKey(name: 'id')
   int? id;
+  @JsonKey(name: 'name')
   String? name;
+  @JsonKey(name: 'description')
   String? description;
 
-  SkillModel({
+  Skill({
     this.id,
     this.name,
     this.description,
   });
 
+  factory Skill.fromJson(Map<String, dynamic> json) => _$SkillFromJson(json);
 
-  factory SkillModel.fromJson(Map<String, dynamic> json) {
-    return SkillModel(
-      id: json['id'],
-      name: json['name'],
-      description: json['description'],
-    );
-  }
-
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'description': description,
-    };
-  }
+  Map<String, dynamic> toJson() => _$SkillToJson(this);
 
   @override
   String toString() {
@@ -141,39 +106,28 @@ class SkillModel {
   }
 }
 
-
-class ProjectModel {
+@JsonSerializable(explicitToJson: true)
+class Project {
+  @JsonKey(name: 'id')
   int? id;
+  @JsonKey(name: 'name')
   String? name;
+  @JsonKey(name: 'description')
   String? description;
+  @JsonKey(name: 'link')
   String? link;
 
-  ProjectModel({
+  Project({
     this.id,
     this.name,
     this.description,
     this.link,
   });
 
+  factory Project.fromJson(Map<String, dynamic> json) =>
+      _$ProjectFromJson(json);
 
-  factory ProjectModel.fromJson(Map<String, dynamic> json) {
-    return ProjectModel(
-      id: json['id'],
-      name: json['name'],
-      description: json['description'],
-      link: json['link'],
-    );
-  }
-
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'description': description,
-      'link': link,
-    };
-  }
+  Map<String, dynamic> toJson() => _$ProjectToJson(this);
 
   @override
   String toString() {
@@ -181,36 +135,28 @@ class ProjectModel {
   }
 }
 
-class AchievementModel {
+@JsonSerializable(explicitToJson: true)
+class Achievement {
+  @JsonKey(name: 'id')
   int? id;
+  @JsonKey(name: 'name')
   String? name;
+  @JsonKey(name: 'description')
   String? description;
+  @JsonKey(name: 'link')
   String? link;
 
-  AchievementModel({
+  Achievement({
     this.id,
     this.name,
     this.description,
     this.link,
   });
 
-  factory AchievementModel.fromJson(Map<String, dynamic> json) {
-    return AchievementModel(
-      id: json['id'],
-      name: json['name'],
-      description: json['description'],
-      link: json['link'],
-    );
-  }
+  factory Achievement.fromJson(Map<String, dynamic> json) =>
+      _$AchievementFromJson(json);
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'description': description,
-      'link': link,
-    };
-  }
+  Map<String, dynamic> toJson() => _$AchievementToJson(this);
 
   @override
   String toString() {
@@ -218,15 +164,22 @@ class AchievementModel {
   }
 }
 
-class WorkExperienceModel {
+@JsonSerializable(explicitToJson: true)
+class WorkExperience {
+  @JsonKey(name: 'id')
   int? id;
+  @JsonKey(name: 'job')
   String? job;
+  @JsonKey(name: 'work_place')
   String? workPlace;
+  @JsonKey(name: 'description')
   String? description;
+  @JsonKey(name: 'start_date')
   DateTime? startDate;
+  @JsonKey(name: 'finish_date')
   DateTime? finishDate;
 
-  WorkExperienceModel({
+  WorkExperience({
     this.id,
     this.job,
     this.workPlace,
@@ -235,27 +188,10 @@ class WorkExperienceModel {
     this.finishDate,
   });
 
-  factory WorkExperienceModel.fromJson(Map<String, dynamic> json) {
-    return WorkExperienceModel(
-      id: json['id'],
-      job: json['job'],
-      workPlace: json['workPlace'],
-      description: json['description'],
-      startDate: json['startDate'] != null ? DateTime.parse(json['startDate']) : null,
-      finishDate: json['finishDate'] != null ? DateTime.parse(json['finishDate']) : null,
-    );
-  }
+  factory WorkExperience.fromJson(Map<String, dynamic> json) =>
+      _$WorkExperienceFromJson(json);
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'job': job,
-      'workPlace': workPlace,
-      'description': description,
-      'startDate': startDate?.toIso8601String(),
-      'finishDate': finishDate?.toIso8601String(),
-    };
-  }
+  Map<String, dynamic> toJson() => _$WorkExperienceToJson(this);
 
   @override
   String toString() {
@@ -263,16 +199,24 @@ class WorkExperienceModel {
   }
 }
 
-class EducationModel {
+@JsonSerializable(explicitToJson: true)
+class Education {
+  @JsonKey(name: 'id')
   int? id;
+  @JsonKey(name: 'institution')
   String? institution;
+  @JsonKey(name: 'major')
   String? major;
+  @JsonKey(name: 'degree')
   String? degree;
+  @JsonKey(name: 'description')
   String? description;
+  @JsonKey(name: 'start_date')
   DateTime? startDate;
+  @JsonKey(name: 'finish_date')
   DateTime? finishDate;
 
-  EducationModel({
+  Education({
     this.id,
     this.institution,
     this.major,
@@ -282,29 +226,10 @@ class EducationModel {
     this.finishDate,
   });
 
-  factory EducationModel.fromJson(Map<String, dynamic> json) {
-    return EducationModel(
-      id: json['id'],
-      institution: json['institution'],
-      major: json['major'],
-      degree: json['degree'],
-      description: json['description'],
-      startDate: json['startDate'] != null ? DateTime.parse(json['startDate']) : null,
-      finishDate: json['finishDate'] != null ? DateTime.parse(json['finishDate']) : null,
-    );
-  }
+  factory Education.fromJson(Map<String, dynamic> json) =>
+      _$EducationFromJson(json);
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'institution': institution,
-      'major': major,
-      'degree': degree,
-      'description': description,
-      'startDate': startDate?.toIso8601String(),
-      'finishDate': finishDate?.toIso8601String(),
-    };
-  }
+  Map<String, dynamic> toJson() => _$EducationToJson(this);
 
   @override
   String toString() {
@@ -312,3 +237,31 @@ class EducationModel {
   }
 }
 
+@JsonSerializable(explicitToJson: true)
+class Status {
+  @JsonKey(name: 'id')
+  int? id;
+  @JsonKey(name: 'vacancy_id')
+  int? vacancyId;
+  @JsonKey(name: 'deadline')
+  String? deadline;
+  @JsonKey(name: 'date')
+  String? date;
+  @JsonKey(name: 'message')
+  String? message;
+  @JsonKey(name: 'stage')
+  StageEnum? stage;
+
+  Status({
+    this.id,
+    this.vacancyId,
+    this.deadline,
+    this.date,
+    this.message,
+    this.stage,
+  });
+
+  factory Status.fromJson(Map<String, dynamic> json) => _$StatusFromJson(json);
+
+  Map<String, dynamic> toJson() => _$StatusToJson(this);
+}

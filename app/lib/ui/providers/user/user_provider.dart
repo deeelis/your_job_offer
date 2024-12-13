@@ -9,7 +9,14 @@ part 'user_provider.g.dart';
 class UserState extends _$UserState {
   @override
   Future<User> build() async {
-    return await ref.read(userRepositoryProvider).getUserFromLocalStorage();
+    User user =
+        await ref.read(userRepositoryProvider).getUserFromLocalStorage();
+    try {
+      user = await ref.read(userRepositoryProvider).login(user);
+    } on Exception {
+      user = User.getEmptyUser();
+    }
+    return user;
   }
 
   Future<User> login(User user) async {
@@ -17,24 +24,25 @@ class UserState extends _$UserState {
     state = AsyncValue.data(user);
     return user;
   }
-  Future<User> register(User rawUser) async{
+
+  Future<User> register(User rawUser) async {
     final user = await ref.read(userRepositoryProvider).register(rawUser);
     state = AsyncValue.data(user);
     return user;
   }
-  Future<void> logout()async {
+
+  Future<void> logout() async {
     await ref.read(userRepositoryProvider).logout();
     state = AsyncValue.data(User.getEmptyUser());
   }
 
-  Future<void> updateUser(User user)async {
-    state=AsyncValue.data(user);
+  Future<void> updateUser(User user) async {
+    state = AsyncValue.data(user);
     print(state.valueOrNull?.login);
   }
 
-  Future<void> uploadForm(User user)async {
-    user=await ref.read(userRepositoryProvider).uploadForm(user);
-    state=AsyncValue.data(user);
+  Future<void> uploadForm(User user) async {
+    user = await ref.read(userRepositoryProvider).uploadForm(user);
+    state = AsyncValue.data(user);
   }
-
 }

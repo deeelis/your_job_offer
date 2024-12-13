@@ -1,9 +1,6 @@
-import 'dart:convert';
-
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:http/http.dart' as http;
 import 'package:your_job_offer/ui/providers/user/user_provider.dart';
 
 import '../../domain/model/enums.dart';
@@ -47,16 +44,17 @@ class _FormPageState extends ConsumerState<FormPage> {
   EmploymentEnum? selectedEmployment;
   ScheduleEnum? selectedSchedule;
   EducationLevelEnum? selectedEducationLevel;
+  CitizenshipEnum? selectedCitizenship;
 
   DateTime? selectedBirthDate;
-  CountryModel? selectedCountry;
-  CityModel? selectedCity;
+  Country? selectedCountry;
+  City? selectedCity;
 
-  List<EducationModel> educations = [];
-  List<WorkExperienceModel> workExperiences = [];
-  List<ProjectModel> projects = [];
-  List<SkillModel> skills = [];
-  List<LanguageModel> languages = [];
+  List<Education> educations = [];
+  List<WorkExperience> workExperiences = [];
+  List<Project> projects = [];
+  List<Skill> skills = [];
+  List<Language> languages = [];
 
   late User user;
 
@@ -65,6 +63,7 @@ class _FormPageState extends ConsumerState<FormPage> {
     super.initState();
 
     user = widget.args.user;
+    print(user);
     firstNameController = TextEditingController(text: user.firstName ?? '');
     lastNameController = TextEditingController(text: user.lastName ?? '');
     emailController = TextEditingController(text: user.email ?? '');
@@ -84,22 +83,26 @@ class _FormPageState extends ConsumerState<FormPage> {
     selectedRelocation = user.relocation;
     selectedEmployment = user.employment;
     selectedSchedule = user.schedule;
+    selectedCitizenship = user.citizenship ?? CitizenshipEnum.rf;
     selectedEducationLevel =
         user.educationLevel ?? EducationLevelEnum.secondary;
 
     selectedBirthDate = DateTime.tryParse(user.birthDate ?? "");
-    selectedCountry = user.country;
-    selectedCity = user.city;
+    // selectedCountry = user.country;
+    // selectedCity = user.city;
 
-    educations.addAll(user.educations);
-    workExperiences.addAll(user.workExperiences);
-    projects.addAll(user.projects);
-    skills.addAll(user.skills);
-    languages.addAll(user.languages);
+    educations.addAll(user.educations ?? []);
+    workExperiences.addAll(user.workExperiences ?? []);
+    projects.addAll(user.projects ?? []);
+    skills.addAll(user.skills ?? []);
+    languages.addAll(user.languages ?? []);
   }
 
   Future<void> submitForm() async {
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState!.validate() &&
+        selectedCitizenship != null &&
+        selectedCountry != null &&
+        selectedCity != null) {
       user.firstName = firstNameController.text;
       user.lastName = lastNameController.text;
       user.middleName = middleNameController.text;
@@ -125,9 +128,28 @@ class _FormPageState extends ConsumerState<FormPage> {
       user.educations = educations;
       user.workExperiences = workExperiences;
       user.skills = skills;
-    }
 
-    await ref.read(userStateProvider.notifier).uploadForm(user);
+      await ref.read(userStateProvider.notifier).uploadForm(user);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Form saved successfully!")),
+        );
+        Navigator.pushNamedAndRemoveUntil(
+            context, Pages.home, (route) => false);
+      }
+    } else if (selectedCitizenship == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Нужно заполнить гражданство")),
+      );
+    } else if (selectedCountry == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Нужно заполнить страну")),
+      );
+    } else if (selectedCity == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Нужно заполнить город")),
+      );
+    }
   }
 
   Future<void> _selectBirthDate() async {
@@ -156,13 +178,6 @@ class _FormPageState extends ConsumerState<FormPage> {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
                 await submitForm();
-                if(context.mounted){
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Form saved successfully!")),
-                  );
-                  Navigator.pushNamedAndRemoveUntil(context, Pages.authHH,(route) => false);
-                }
-
               }
             },
           ),
@@ -238,15 +253,21 @@ class _FormPageState extends ConsumerState<FormPage> {
                   return null;
                 },
               ),
+              _buildDropdown<CitizenshipEnum>(
+                "Гражданство",
+                CitizenshipEnum.values,
+                selectedCitizenship,
+                (value) => setState(() => selectedCitizenship = value),
+                (value) => value.value,
+              ),
               TextFormField(
                 controller: descriptionController,
                 decoration: const InputDecoration(
                     labelText: 'Дополнительная информация'),
               ),
-              DropdownSearch<CountryModel>(
+              DropdownSearch<Country>(
                 items: countries
-                    .map((e) =>
-                        CountryModel(area_id: e['id'], name: e['country']))
+                    .map((e) => Country(area_id: e['id'], name: e['country']))
                     .toList(),
                 onChanged: (value) {
                   setState(() {
@@ -267,11 +288,11 @@ class _FormPageState extends ConsumerState<FormPage> {
                 // showSearchBox: true,
               ),
               if (selectedCountry != null)
-                DropdownSearch<CityModel>(
+                DropdownSearch<City>(
                   items: (countries.firstWhere((e) =>
                               e['country'] == selectedCountry?.name)['cities']
                           as List<Map<String, dynamic>>)
-                      .map((e) => CityModel(area_id: e['id'], name: e['city']))
+                      .map((e) => City(area_id: e['id'], name: e['city']))
                       .toList(),
                   dropdownDecoratorProps: const DropDownDecoratorProps(
                       dropdownSearchDecoration: InputDecoration(
@@ -289,11 +310,11 @@ class _FormPageState extends ConsumerState<FormPage> {
                     showSearchBox: true,
                   ),
                 ),
-              _buildDynamicList<SkillModel>(
+              _buildDynamicList<Skill>(
                 "Добавить навык",
                 skills,
                 (skill) => _buildSkillForm(skill),
-                () => setState(() => skills.add(SkillModel())),
+                () => setState(() => skills.add(Skill())),
                 (index) => setState(() => skills.removeAt(index)),
               ),
               _buildDropdown<EducationLevelEnum>(
@@ -303,12 +324,12 @@ class _FormPageState extends ConsumerState<FormPage> {
                 (value) => setState(() => selectedEducationLevel = value),
                 (value) => value.value,
               ),
-              _buildDynamicList<EducationModel>(
+              _buildDynamicList<Education>(
                 "Добавить образование",
                 educations,
                 (education) => _buildEducationForm(education),
-                () => setState(() => educations.add(
-                    EducationModel(id: DateTime.now().millisecondsSinceEpoch))),
+                () => setState(() => educations
+                    .add(Education(id: DateTime.now().millisecondsSinceEpoch))),
                 (index) => setState(() => educations.removeAt(index)),
               ),
               TextFormField(
@@ -364,12 +385,12 @@ class _FormPageState extends ConsumerState<FormPage> {
                 (value) => setState(() => selectedRelocation = value),
                 (value) => value.value,
               ),
-              _buildDynamicList<WorkExperienceModel>(
+              _buildDynamicList<WorkExperience>(
                 "Добавить опыт работы",
                 workExperiences,
                 (experience) => _buildWorkExperienceForm(experience),
-                () => setState(() => workExperiences.add(WorkExperienceModel(
-                    id: DateTime.now().millisecondsSinceEpoch))),
+                () => setState(() => workExperiences.add(
+                    WorkExperience(id: DateTime.now().millisecondsSinceEpoch))),
                 (index) => setState(() => workExperiences.removeAt(index)),
               ),
             ],
@@ -444,7 +465,7 @@ class _FormPageState extends ConsumerState<FormPage> {
     );
   }
 
-  Widget _buildEducationForm(EducationModel education) {
+  Widget _buildEducationForm(Education education) {
     return Padding(
       padding: const EdgeInsets.all(8),
       child: Column(
@@ -529,7 +550,7 @@ class _FormPageState extends ConsumerState<FormPage> {
     );
   }
 
-  Widget _buildWorkExperienceForm(WorkExperienceModel workExperience) {
+  Widget _buildWorkExperienceForm(WorkExperience workExperience) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(8),
@@ -610,7 +631,7 @@ class _FormPageState extends ConsumerState<FormPage> {
     );
   }
 
-  Widget _buildSkillForm(SkillModel skill) {
+  Widget _buildSkillForm(Skill skill) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(8),

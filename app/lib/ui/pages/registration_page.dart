@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:your_job_offer/domain/model/enums.dart';
 import 'package:your_job_offer/ui/providers/user/user_provider.dart';
 
 import '../../domain/model/user.dart';
 import '../../main.dart';
-import 'form_page.dart';
 
 class RegistrationPage extends ConsumerStatefulWidget {
   const RegistrationPage({super.key});
@@ -24,10 +24,12 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   final _dateController = TextEditingController();
+  CitizenshipEnum? selectedCitizenship;
   DateTime? _selectedDate;
 
   @override
   Widget build(BuildContext context) {
+    var user = ref.watch(userStateProvider).valueOrNull ?? User.getEmptyUser();
     return Scaffold(
       appBar: AppBar(title: const Text('Регистрация')),
       body: Padding(
@@ -108,7 +110,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                 ),
                 TextFormField(
                   controller: _dateController,
-                  decoration: InputDecoration(labelText: 'Дата рождения'),
+                  decoration: const InputDecoration(labelText: 'Дата рождения'),
                   onTap: () async {
                     var date = await showDatePicker(
                       context: context,
@@ -124,10 +126,18 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                     }
                   },
                 ),
+                _buildDropdown<CitizenshipEnum>(
+                  "Гражданство",
+                  CitizenshipEnum.values,
+                  selectedCitizenship,
+                  (value) => setState(() => selectedCitizenship = value),
+                  (value) => value.value,
+                ),
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
+                    if (_formKey.currentState!.validate() &&
+                        selectedCitizenship != null) {
                       final rawUser = User(
                           login: _loginController.text,
                           password: _passwordController.text,
@@ -136,13 +146,22 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                           middleName: _patronymicController.text,
                           phone: _phoneController.text,
                           email: _emailController.text,
-                          birthDate:_selectedDate.toString());
+                          birthDate: _selectedDate.toString(),
+                          citizenship: selectedCitizenship);
                       final user = await ref
                           .read(userStateProvider.notifier)
                           .register(rawUser);
                       if (user.login.isNotEmpty && context.mounted) {
-                        Navigator.pushNamed(context, Pages.form, arguments: FormArguments(user: user));
+                        Navigator.pushNamed(
+                          context,
+                          Pages.cvUpload,
+                        );
                       }
+                    } else if (selectedCitizenship == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text("Нужно заполнить поле гражданство")),
+                      );
                     }
                   },
                   child: const Text('Зарегистрироваться'),
@@ -151,7 +170,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                   onPressed: () {
                     Navigator.pushReplacementNamed(context, Pages.login);
                   },
-                  child: Text('Авторизация'),
+                  child: const Text('Авторизация'),
                 ),
               ],
             ),
@@ -171,5 +190,22 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
     _emailController.dispose();
     _phoneController.dispose();
     super.dispose();
+  }
+
+  Widget _buildDropdown<T extends Enum>(
+      String label,
+      List<T> values,
+      T? selectedValue,
+      ValueChanged<T?> onChanged,
+      String Function(T) toStringValue) {
+    return DropdownButtonFormField<T>(
+      decoration: InputDecoration(labelText: label),
+      value: selectedValue,
+      onChanged: onChanged,
+      items: values
+          .map((value) =>
+              DropdownMenuItem(value: value, child: Text(toStringValue(value))))
+          .toList(),
+    );
   }
 }

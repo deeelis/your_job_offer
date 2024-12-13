@@ -7,6 +7,7 @@ import 'package:your_job_offer/ui/pages/home_page.dart';
 import 'package:your_job_offer/ui/pages/login_page.dart';
 import 'package:your_job_offer/ui/pages/profile_page.dart';
 import 'package:your_job_offer/ui/pages/registration_page.dart';
+import 'package:your_job_offer/ui/pages/user_vacancy_page.dart';
 
 void main() {
   runApp(
@@ -35,8 +36,8 @@ class MyApp extends ConsumerWidget {
               return const RegistrationPage();
             case Pages.home:
               return const HomePage();
-            // case Pages.cvUpload:
-            //   return const CVUploadPage();
+            case Pages.cvUpload:
+              return const CVUploadPage();
             case Pages.form:
               if (arguments is FormArguments) {
                 return FormPage(arguments);
@@ -49,8 +50,8 @@ class MyApp extends ConsumerWidget {
               return const AuthPage();
             // case Pages.settings:
             //   return const SettingsPage();
-            // case Pages.userVacancies:
-            //   return const UserVacancies();
+            case Pages.userVacancies:
+              return const UserVacancyPage();
             default:
               return const LoginPage();
           }
@@ -69,5 +70,5 @@ class Pages {
   static const String profile = '/profile';
   static const String settings = '/settings';
   static const String userVacancies = '/user_vacancies';
-  static const String authHH= '/authHH';
+  static const String authHH = '/authHH';
 }

@@ -22,21 +22,55 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   Widget build(BuildContext context) {
     var user = ref.watch(userStateProvider).valueOrNull ?? User.getEmptyUser();
     return Scaffold(
-        appBar: AppBar(title: const Text('Профиль')),
+        appBar: AppBar(
+          title: const Text('Профиль'),
+          actions: [
+            IconButton(
+                onPressed: () {
+                  ref.read(userStateProvider.notifier).logout();
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, Pages.home, (route) => false);
+                },
+                icon: const Icon(Icons.logout))
+          ],
+        ),
         body: SingleChildScrollView(
-          child: Column(
-            children: [
-
-              Text(
-                  "ФИО:${user.lastName} ${user.firstName} ${user.middleName ?? ''}"),
-              Text('Дата рождения: ${user.birthDate}'),
-            Text('Email: ${user.email}'),
-              Text('Телефон: ${user.phone}'),
-              Text('Email: ${user.email}'),
-              ElevatedButton(onPressed: () {
-                Navigator.pushNamed(context, Pages.userVacancies);
-              }, child: Text('Мои вакансии'))
-            ],
+          child: Center(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text('Логин: ${user.login}'),
+                ),
+                const Divider(),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                      "ФИО:${user.lastName} ${user.firstName} ${user.middleName ?? ''}"),
+                ),
+                const Divider(),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text('Дата рождения: ${user.birthDate}'),
+                ),
+                const Divider(),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text('Email: ${user.email}'),
+                ),
+                const Divider(),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text('Телефон: ${user.phone}'),
+                ),
+                const Divider(),
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, Pages.userVacancies);
+                    },
+                    child: const Text('Мои вакансии'))
+              ],
+            ),
           ),
         ));
   }

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:your_job_offer/ui/providers/user/user_provider.dart';
 
 import '../../domain/model/user.dart';
+import '../../main.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -20,7 +21,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Вход'),
+        title: const Text('Вход'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -40,7 +41,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               ),
               TextFormField(
                 controller: _passwordController,
-                decoration: InputDecoration(labelText: 'Пароль'),
+                decoration: const InputDecoration(labelText: 'Пароль'),
                 obscureText: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -60,17 +61,17 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     print('Логин: ${_loginController.text}');
                     print('Пароль: ${_passwordController.text}');
                     if (response != User.getEmptyUser()) {
-                      Navigator.pushReplacementNamed(context, '/home');
+                      Navigator.pushReplacementNamed(context, Pages.home);
                     }
                   }
                 },
-                child: Text('Войти'),
+                child: const Text('Войти'),
               ),
               TextButton(
                 onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/registration');
+                  Navigator.pushReplacementNamed(context, Pages.registration);
                 },
-                child: Text('Регистрация'),
+                child: const Text('Регистрация'),
               ),
             ],
           ),

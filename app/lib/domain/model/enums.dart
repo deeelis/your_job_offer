@@ -5,6 +5,7 @@ enum WorkTypeEnum {
   field_work('Работа на улице');
 
   final String value;
+
   const WorkTypeEnum(this.value);
 }
 
@@ -13,6 +14,7 @@ enum GenderEnum {
   female('Женский');
 
   final String value;
+
   const GenderEnum(this.value);
 }
 
@@ -22,6 +24,7 @@ enum BusinessTripReadinessEnum {
   never('Не готов к командировкам');
 
   final String value;
+
   const BusinessTripReadinessEnum(this.value);
 }
 
@@ -31,6 +34,7 @@ enum RelocationEnum {
   relocation_desirable('Хочу переехать');
 
   final String value;
+
   const RelocationEnum(this.value);
 }
 
@@ -42,6 +46,7 @@ enum EmploymentEnum {
   probation('Стажировка');
 
   final String value;
+
   const EmploymentEnum(this.value);
 }
 
@@ -53,6 +58,7 @@ enum ScheduleEnum {
   flyInFlyOut('Вахтовый метод');
 
   final String value;
+
   const ScheduleEnum(this.value);
 }
 
@@ -66,6 +72,7 @@ enum LanguageLevelEnum {
   l1('Родной');
 
   final String value;
+
   const LanguageLevelEnum(this.value);
 }
 
@@ -80,5 +87,27 @@ enum EducationLevelEnum {
   doctor('Доктор наук');
 
   final String value;
+
   const EducationLevelEnum(this.value);
+}
+
+enum CitizenshipEnum {
+  rf('Гражданство РФ'),
+  another('Другое');
+
+  final String value;
+
+  const CitizenshipEnum(this.value);
+}
+
+enum StageEnum {
+  consideration('consideration'),
+  reject('reject'),
+  invite('invite'),
+  testing('testing'),
+  interview('interview');
+
+  final String value;
+
+  const StageEnum(this.value);
 }
