@@ -2,8 +2,8 @@ import 'package:json_annotation/json_annotation.dart';
 
 import '../../domain/model/vacancy.dart';
 
-
 part 'list_vacancies_dto.g.dart';
+
 @JsonSerializable(explicitToJson: true)
 class ListVacanciesDto {
   @JsonKey(defaultValue: [])
@@ -15,6 +15,4 @@ class ListVacanciesDto {
       _$ListVacanciesDtoFromJson(json);
 
   Map<String, dynamic> toJson() => _$ListVacanciesDtoToJson(this);
-
-
 }

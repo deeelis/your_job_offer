@@ -15,12 +15,13 @@ class UserDao {
   static const String registerPath = '/register';
   static const String getVacanciesPath = '/get_vacancies';
   static const String formPath = '/form';
+  static const String getStatusPath = '/get_status';
 
   Future<User> registerUser(
     User user,
   ) async {
     var url = '$baseUrl$registerPath';
-    print(user);
+    print(user.professionalRole?.name.toString());
 
     final response = await http.post(
       Uri.parse(url),
@@ -31,6 +32,7 @@ class UserDao {
       throw Exception(response.body);
     }
     return User.fromJson(json.decode(response.body));
+    // return user;
   }
 
   Future<User> loginUser(User user) async {
@@ -60,7 +62,7 @@ class UserDao {
     }
     print(json.decode(response.body));
 
-    return ListVacanciesDto.fromJson(json.decode(s)).vacancies;
+    return ListVacanciesDto.fromJson(json.decode(response.body)).vacancies;
   }
 
   Future<User> uploadForm(User user) async {
@@ -93,7 +95,25 @@ class UserDao {
     return prefs.setString("password", user.password);
   }
 
-  Future<void> responseToTheVacancy(User user, Vacancy vacancy) async {}
+  Future<void> responseToTheVacancy(User user, Vacancy vacancy) async {
+
+  }
+  Future<List<Vacancy>> getStatus(User user) async {
+    var url = '$baseUrl$getStatusPath'; //todo normal path
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {"Content-Type": "application/json"},
+      body: json.encode(user.toJson()),
+    );
+    if (response.statusCode != 200) {
+      throw Exception(response.body);
+    }
+    print('STATUS');
+    print(json.decode(response.body));
+
+    return ListVacanciesDto.fromJson(json.decode(response.body)).vacancies;
+  }
 }
 
 String s = '''{

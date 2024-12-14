@@ -56,14 +56,12 @@ class User {
   ScheduleEnum? schedule;
   @JsonKey(name: 'hh_resume_id')
   String? hhResumeId;
-  @JsonKey(
-    name: 'education_level',
-  )
+  @JsonKey(name: 'education_level')
   EducationLevelEnum? educationLevel;
-  @JsonKey(
-    name: 'citizenship',
-  )
+  @JsonKey(name: 'citizenship')
   CitizenshipEnum? citizenship;
+  @JsonKey(name: 'professional_role')
+  ProfessionalRole? professionalRole;
   @JsonKey(name: 'projects')
   List<Project>? projects;
   @JsonKey(name: 'achievements')
@@ -106,6 +104,7 @@ class User {
     this.hhResumeId,
     this.educationLevel,
     this.citizenship,
+    this.professionalRole,
     this.projects = const [],
     this.achievements = const [],
     this.workExperiences = const [],
@@ -123,8 +122,4 @@ class User {
     return User(login: "", password: "");
   }
 
-  @override
-  String toString() {
-    return 'User(id=$id, login=$login, password=***, firstName=$firstName, lastName=$lastName, gender=$gender, email=$email, city=$city, country=$country, projects=$projects, achievements=$achievements, workExperiences=$workExperiences, educations=$educations, skills=$skills, languages=$languages)';
-  }
 }

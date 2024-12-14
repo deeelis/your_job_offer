@@ -8,7 +8,7 @@ part 'vacancy.g.dart';
 @JsonSerializable(explicitToJson: true)
 class Vacancy {
   @JsonKey(name: 'id')
-  final int id;
+  final int? id;
   @JsonKey(name: 'job')
   final String? job;
   @JsonKey(name: 'description')
@@ -59,34 +59,38 @@ class Vacancy {
   final String? idVacancyFromSource;
   @JsonKey(name: 'status')
   final List<Status>? status;
+  @JsonKey(name: 'professional_role')
+  ProfessionalRole? professionalRole;
 
-  Vacancy(
-      {required this.id,
-      this.job,
-      this.description,
-      this.minSalary,
-      this.maxSalary,
-      this.address,
-      this.link,
-      this.applyLink,
-      this.phone,
-      this.email,
-      this.employer,
-      this.createdAt,
-      this.updatedAt,
-      this.workType,
-      this.businessTripReadiness,
-      this.workHours,
-      this.relocation,
-      this.employment,
-      this.schedule,
-      this.hasTest,
-      this.requirement,
-      this.responsibility,
-      this.area,
-      this.source,
-      this.idVacancyFromSource,
-      this.status});
+  Vacancy({
+    this.id,
+    this.job,
+    this.description,
+    this.minSalary,
+    this.maxSalary,
+    this.address,
+    this.link,
+    this.applyLink,
+    this.phone,
+    this.email,
+    this.employer,
+    this.createdAt,
+    this.updatedAt,
+    this.workType,
+    this.businessTripReadiness,
+    this.workHours,
+    this.relocation,
+    this.employment,
+    this.schedule,
+    this.hasTest,
+    this.requirement,
+    this.responsibility,
+    this.area,
+    this.source,
+    this.idVacancyFromSource,
+    this.status,
+    this.professionalRole,
+  });
 
   factory Vacancy.fromJson(Map<String, dynamic> json) =>
       _$VacancyFromJson(json);

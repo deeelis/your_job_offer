@@ -30,7 +30,6 @@ class _VacancyPageState extends ConsumerState<VacancyPage> {
   Widget build(BuildContext context) {
     var user = ref.watch(userStateProvider).valueOrNull ?? User.getEmptyUser();
     vacancies = ref.watch(vacanciesStateProvider).valueOrNull ?? [];
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Vacancies"),

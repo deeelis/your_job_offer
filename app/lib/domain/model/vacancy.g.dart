@@ -7,7 +7,7 @@ part of 'vacancy.dart';
 // **************************************************************************
 
 Vacancy _$VacancyFromJson(Map<String, dynamic> json) => Vacancy(
-      id: (json['id'] as num).toInt(),
+      id: (json['id'] as num?)?.toInt(),
       job: json['job'] as String?,
       description: json['description'] as String?,
       minSalary: (json['min_salary'] as num?)?.toInt(),
@@ -42,6 +42,10 @@ Vacancy _$VacancyFromJson(Map<String, dynamic> json) => Vacancy(
       status: (json['status'] as List<dynamic>?)
           ?.map((e) => Status.fromJson(e as Map<String, dynamic>))
           .toList(),
+      professionalRole: json['professional_role'] == null
+          ? null
+          : ProfessionalRole.fromJson(
+              json['professional_role'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$VacancyToJson(Vacancy instance) => <String, dynamic>{
@@ -72,6 +76,7 @@ Map<String, dynamic> _$VacancyToJson(Vacancy instance) => <String, dynamic>{
       'source': instance.source,
       'id_vacancy_from_source': instance.idVacancyFromSource,
       'status': instance.status?.map((e) => e.toJson()).toList(),
+      'professional_role': instance.professionalRole?.toJson(),
     };
 
 const _$WorkTypeEnumEnumMap = {

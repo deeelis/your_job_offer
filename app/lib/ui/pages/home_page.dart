@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:your_job_offer/ui/pages/vacancy_page.dart';
 import 'package:your_job_offer/ui/providers/user/user_provider.dart';
+import 'package:your_job_offer/ui/providers/vacancies/vacancies_provider.dart';
 
 import '../../domain/model/user.dart';
 import 'login_page.dart';
@@ -25,6 +26,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     if (user.login.isEmpty) {
       return const LoginPage();
     } else {
+      ref.read(vacanciesStateProvider.notifier).getVacancies(user);
       return const VacancyPage();
     }
   }

@@ -37,13 +37,13 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<List<Vacancy>> getVacancies(User user) async{
+  Future<List<Vacancy>> getVacancies(User user) async {
     return await userDao.getVacancies(user);
   }
 
   @override
   Future<User> uploadForm(User user) async {
-    user=await userDao.uploadForm(user);
+    user = await userDao.uploadForm(user);
     await userDao.setUser(user);
     return user;
   }
@@ -51,5 +51,10 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<void> responseToTheVacancy(User user, Vacancy vacancy) async {
     await userDao.responseToTheVacancy(user, vacancy);
+  }
+
+  @override
+  Future<List<Vacancy>> getStatus(User user) async {
+    return await userDao.getStatus(user);
   }
 }

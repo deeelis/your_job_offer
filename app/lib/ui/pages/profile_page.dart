@@ -4,6 +4,7 @@ import 'package:your_job_offer/ui/providers/user/user_provider.dart';
 
 import '../../domain/model/user.dart';
 import '../../main.dart';
+import 'form_page.dart';
 
 class ProfilePage extends ConsumerStatefulWidget {
   const ProfilePage({super.key});
@@ -25,6 +26,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
         appBar: AppBar(
           title: const Text('Профиль'),
           actions: [
+            IconButton(onPressed: (){
+              Navigator.pushNamed(context, Pages.form,
+                  arguments: FormArguments(user: user, isEdit: true),);
+            }, icon: Icon(Icons.edit)),
             IconButton(
                 onPressed: () {
                   ref.read(userStateProvider.notifier).logout();

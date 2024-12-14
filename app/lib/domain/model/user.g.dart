@@ -42,6 +42,10 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
           _$EducationLevelEnumEnumMap, json['education_level']),
       citizenship:
           $enumDecodeNullable(_$CitizenshipEnumEnumMap, json['citizenship']),
+      professionalRole: json['professional_role'] == null
+          ? null
+          : ProfessionalRole.fromJson(
+              json['professional_role'] as Map<String, dynamic>),
       projects: (json['projects'] as List<dynamic>?)
               ?.map((e) => Project.fromJson(e as Map<String, dynamic>))
               .toList() ??
@@ -100,6 +104,7 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'hh_resume_id': instance.hhResumeId,
       'education_level': _$EducationLevelEnumEnumMap[instance.educationLevel],
       'citizenship': _$CitizenshipEnumEnumMap[instance.citizenship],
+      'professional_role': instance.professionalRole?.toJson(),
       'projects': instance.projects?.map((e) => e.toJson()).toList(),
       'achievements': instance.achievements?.map((e) => e.toJson()).toList(),
       'work_experiences':

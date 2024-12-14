@@ -20,8 +20,9 @@ class FormPage extends ConsumerStatefulWidget {
 
 class FormArguments {
   final User user;
+  final bool isEdit;
 
-  FormArguments({required this.user});
+  FormArguments({required this.user, this.isEdit=false});
 }
 
 class _FormPageState extends ConsumerState<FormPage> {
@@ -45,6 +46,7 @@ class _FormPageState extends ConsumerState<FormPage> {
   ScheduleEnum? selectedSchedule;
   EducationLevelEnum? selectedEducationLevel;
   CitizenshipEnum? selectedCitizenship;
+  ProfessionalRole? selectedRole;
 
   DateTime? selectedBirthDate;
   Country? selectedCountry;
@@ -63,7 +65,7 @@ class _FormPageState extends ConsumerState<FormPage> {
     super.initState();
 
     user = widget.args.user;
-    print(user);
+    print(user.toString());
     firstNameController = TextEditingController(text: user.firstName ?? '');
     lastNameController = TextEditingController(text: user.lastName ?? '');
     emailController = TextEditingController(text: user.email ?? '');
@@ -88,6 +90,7 @@ class _FormPageState extends ConsumerState<FormPage> {
         user.educationLevel ?? EducationLevelEnum.secondary;
 
     selectedBirthDate = DateTime.tryParse(user.birthDate ?? "");
+    selectedRole = user.professionalRole;
     // selectedCountry = user.country;
     // selectedCity = user.city;
 
@@ -95,14 +98,97 @@ class _FormPageState extends ConsumerState<FormPage> {
     workExperiences.addAll(user.workExperiences ?? []);
     projects.addAll(user.projects ?? []);
     skills.addAll(user.skills ?? []);
-    languages.addAll(user.languages ?? []);
+    List<Language>rightLanguages=[];
+    var ll=languagesMap
+        .map((e) => e['name'])
+        .toList();
+    for (Language l in user.languages ?? []){
+      if(ll.contains(l.name?.trim())){
+        rightLanguages.add(l);
+      }
+    }
+    languages.addAll(rightLanguages);
+  }
+
+  bool validateNecssecaryFields() {
+    if (firstNameController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Нужно заполнить имя")),
+      );
+      return false;
+    } else if (lastNameController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Нужно заполнить фамилию")),
+      );
+      return false;
+    } else if (phoneController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Нужно заполнить телефон")),
+      );
+      return false;
+    } else if (emailController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Нужно заполнить почту")),
+      );
+      return false;
+    } else if (selectedCitizenship == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Нужно заполнить гражданство")),
+      );
+      return false;
+    } else if (selectedCountry == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Нужно выбрать страну")),
+      );
+      return false;
+    } else if (selectedCity == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Нужно выбрать город")),
+      );
+      return false;
+    } else if (selectedRole == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Нужно выбрать роль")),
+      );
+      return false;
+    } else if (selectedEducationLevel == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Нужно выбрать уровень образования")),
+      );
+      return false;
+    } else if (educations.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Нужно заполнить хотя бы одно образование")),
+      );
+      return false;
+    } else if (educations[0].institution == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Нужно заполнить название учебного заведения")),
+      );
+      return false;
+    } else if (educations[0].finishDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Нужно заполнить дату окончания")),
+      );
+      return false;
+    } else if (languages.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Нужно добавить хотя бы один язык")),
+      );
+      return false;
+    }
+    else if (languages[0].level==null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Нужно выбрать уровень владения языком")),
+      );
+      return false;
+    }
+
+    return true;
   }
 
   Future<void> submitForm() async {
-    if (_formKey.currentState!.validate() &&
-        selectedCitizenship != null &&
-        selectedCountry != null &&
-        selectedCity != null) {
+    if (_formKey.currentState!.validate() && validateNecssecaryFields()) {
       user.firstName = firstNameController.text;
       user.lastName = lastNameController.text;
       user.middleName = middleNameController.text;
@@ -128,27 +214,21 @@ class _FormPageState extends ConsumerState<FormPage> {
       user.educations = educations;
       user.workExperiences = workExperiences;
       user.skills = skills;
-
+      user.languages=languages;
+      user.professionalRole=selectedRole;
+      print(user.professionalRole?.name);
       await ref.read(userStateProvider.notifier).uploadForm(user);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Form saved successfully!")),
         );
-        Navigator.pushNamedAndRemoveUntil(
-            context, Pages.home, (route) => false);
+        if(!widget.args.isEdit) {
+          Navigator.pushNamedAndRemoveUntil(
+              context, Pages.home, (route) => false);
+        }else{
+          Navigator.pop(context);
+        }
       }
-    } else if (selectedCitizenship == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Нужно заполнить гражданство")),
-      );
-    } else if (selectedCountry == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Нужно заполнить страну")),
-      );
-    } else if (selectedCity == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Нужно заполнить город")),
-      );
     }
   }
 
@@ -260,6 +340,27 @@ class _FormPageState extends ConsumerState<FormPage> {
                 (value) => setState(() => selectedCitizenship = value),
                 (value) => value.value,
               ),
+
+              DropdownSearch<ProfessionalRole>(
+                items: professionalRoles
+                    .map((e) => ProfessionalRole.fromJson(e))
+                    .toList(),
+                dropdownDecoratorProps: const DropDownDecoratorProps(
+                    dropdownSearchDecoration: InputDecoration(
+                      labelText: "Выберите роль",
+                      hintText: "Роль",
+                    )),
+                onChanged: (value) {
+                  setState(() {
+                    selectedRole = value;
+                  });
+                },
+                selectedItem: selectedRole,
+                itemAsString: (item) => item.name ?? '',
+                popupProps: const PopupProps.menu(
+                  showSearchBox: true,
+                ),
+              ),
               TextFormField(
                 controller: descriptionController,
                 decoration: const InputDecoration(
@@ -329,8 +430,16 @@ class _FormPageState extends ConsumerState<FormPage> {
                 educations,
                 (education) => _buildEducationForm(education),
                 () => setState(() => educations
-                    .add(Education(id: DateTime.now().millisecondsSinceEpoch))),
+                    .add(Education())),
                 (index) => setState(() => educations.removeAt(index)),
+              ),
+              _buildDynamicList<Language>(
+                "Добавить язык",
+                languages,
+                    (language) => _buildLanguageForm(language),
+                    () => setState(() => languages
+                    .add(Language())),
+                    (index) => setState(() => languages.removeAt(index)),
               ),
               TextFormField(
                 controller: minSalaryController,
@@ -406,14 +515,16 @@ class _FormPageState extends ConsumerState<FormPage> {
       T? selectedValue,
       ValueChanged<T?> onChanged,
       String Function(T) toStringValue) {
+    var items=values
+        .map((value) =>
+        DropdownMenuItem(value: value, child: Text(toStringValue(value))))
+        .toList();
+    items.add(const DropdownMenuItem(child: Text("-"), value: null,));
     return DropdownButtonFormField<T>(
       decoration: InputDecoration(labelText: label),
       value: selectedValue,
       onChanged: onChanged,
-      items: values
-          .map((value) =>
-              DropdownMenuItem(value: value, child: Text(toStringValue(value))))
-          .toList(),
+      items: items,
     );
   }
 
@@ -544,6 +655,43 @@ class _FormPageState extends ConsumerState<FormPage> {
                 ),
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLanguageForm(Language language) {
+    return Padding(
+      padding: const EdgeInsets.all(8),
+      child: Column(
+        children: [
+          DropdownSearch<Language>(
+            items: languagesMap
+                .map((e) => Language.fromJson(e))
+                .toList(),
+            dropdownDecoratorProps: const DropDownDecoratorProps(
+                dropdownSearchDecoration: InputDecoration(
+                  labelText: "Выберите язык",
+                  hintText: "Язык",
+                )),
+            onChanged: (value) {
+              setState(() {
+                language.name = value?.name;
+              });
+            },
+            selectedItem: language,
+            itemAsString: (item) => item.name ?? '',
+            popupProps: const PopupProps.menu(
+              showSearchBox: true,
+            ),
+          ),
+          _buildDropdown<LanguageLevelEnum>(
+            "Уровень языка",
+            LanguageLevelEnum.values,
+            language.level,
+                (value) => setState(() => language.level = value),
+                (value) => value.value,
           ),
         ],
       ),

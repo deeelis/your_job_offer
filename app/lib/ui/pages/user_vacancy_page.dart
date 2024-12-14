@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:your_job_offer/ui/providers/user/user_provider.dart';
+import 'package:your_job_offer/ui/providers/vacancies/vacancies_status_provider.dart';
 import 'package:your_job_offer/ui/widgets/user_vacancy_tile.dart';
 
 import '../../domain/model/user.dart';
@@ -23,25 +24,56 @@ class _UserVacancyPageState extends ConsumerState<UserVacancyPage> {
     super.initState();
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     var user = ref.watch(userStateProvider).valueOrNull ?? User.getEmptyUser();
-    // vacancies = user.vacancies ?? [];
-    vacancies = ref.watch(vacanciesStateProvider).valueOrNull ?? [];
+    // final vacancies = ref.watch(vacanciesStatusStateProvider).valueOrNull ?? [];
     return Scaffold(
       appBar: AppBar(
         title: const Text("Vacancies"),
       ),
-      body: ListView.builder(
-        itemCount: vacancies.length,
-        itemBuilder: (context, index) {
-          final vacancy = vacancies[index];
-          return UserVacancyTile(
-            vacancy: vacancy,
-            user: user,
-          );
+      body:
+      FutureBuilder<List<Vacancy>>(
+        future: ref.read(vacanciesStatusStateProvider.notifier).getVacanciesStatus(user),
+        builder: (BuildContext context, AsyncSnapshot<List<Vacancy>> snapshot) {
+          if (snapshot.hasData) {
+            return   ListView.builder(
+              itemCount: snapshot.data?.length,
+              itemBuilder: (context, index) {
+                final vacancy = snapshot.data?[index];
+                return UserVacancyTile(
+                  vacancy: vacancy?? Vacancy(),
+                  user: user,
+                );
+              },
+            );
+          } else if (snapshot.hasError) {
+            print(snapshot.error);
+            return
+              const Center(
+                child: Icon(
+                  Icons.error_outline,
+                  color: Colors.red,
+                  size: 60,
+                ),
+              );
+          } else {
+            return  const Center(child: CircularProgressIndicator());
+          }
         },
       ),
+      // ListView.builder(
+      //   itemCount: vacancies.length,
+      //   itemBuilder: (context, index) {
+      //     final vacancy = vacancies[index];
+      //     return UserVacancyTile(
+      //       vacancy: vacancy,
+      //       user: user,
+      //     );
+      //   },
+      // ),
     );
   }
 }

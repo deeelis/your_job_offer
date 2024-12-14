@@ -33,10 +33,12 @@ class DialogEditFilterState extends ConsumerState<DialogEditFilter> {
   @override
   void initState() {
     super.initState();
-    user=widget.user;
+    user = widget.user;
     _rangeSliderDiscreteValues = const RangeValues(80000, 150000);
-    minSalaryController.text = _rangeSliderDiscreteValues.start.toInt().toString();
-    maxSalaryController.text = _rangeSliderDiscreteValues.end.toInt().toString();
+    minSalaryController.text =
+        _rangeSliderDiscreteValues.start.toInt().toString();
+    maxSalaryController.text =
+        _rangeSliderDiscreteValues.end.toInt().toString();
     workHoursController.text =
         widget.user.workHours != null ? widget.user.workHours.toString() : '';
 
@@ -49,6 +51,7 @@ class DialogEditFilterState extends ConsumerState<DialogEditFilter> {
 
   @override
   Widget build(BuildContext context) {
+    // user.minSalary=50000;
     return Dialog(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -176,34 +179,38 @@ class DialogEditFilterState extends ConsumerState<DialogEditFilter> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   TextButton(
-                    child: Text('Cancel'),
+                    child: const Text('Cancel'),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
                   ),
                   TextButton(
-                    child: Text('Apply'),
+                    child: const Text('Apply'),
                     onPressed: () async {
-                      if(minSalaryController.text.isNotEmpty){
-                        user.minSalary=int.parse(minSalaryController.text);
+                      User newUser=User.fromJson(user.toJson());
+                      newUser.id=null;
+
+                      if (minSalaryController.text.isNotEmpty) {
+                        newUser.minSalary = int.parse(minSalaryController.text);
                       }
-                      if(maxSalaryController.text.isNotEmpty){
-                        user.maxSalary=int.parse(maxSalaryController.text);
+                      if (maxSalaryController.text.isNotEmpty) {
+                        newUser.maxSalary = int.parse(maxSalaryController.text);
                       }
-                      if(workHoursController.text.isNotEmpty){
-                        user.workHours=int.parse(workHoursController.text);
+                      if (workHoursController.text.isNotEmpty) {
+                        newUser.workHours = int.parse(workHoursController.text)?? newUser.workHours;
                       }
 
-                      user.schedule=selectedSchedule;
-                      user.businessTripReadiness=selectedBusinessTripReadiness;
-                      user.relocation=selectedRelocation;
-                      user.workType=selectedWorkType;
-                      user.employment=selectedEmployment;
+                      newUser.schedule = selectedSchedule;
+                      newUser.businessTripReadiness =
+                          selectedBusinessTripReadiness;
+                      newUser.relocation = selectedRelocation;
+                      newUser.workType = selectedWorkType;
+                      newUser.employment = selectedEmployment;
                       await ref
                           .read(vacanciesStateProvider.notifier)
-                          .getVacancies(user);
+                          .getVacancies(newUser);
 
-                      if(context.mounted){
+                      if (context.mounted) {
                         Navigator.of(context).pop();
                       }
                     },

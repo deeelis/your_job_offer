@@ -265,3 +265,26 @@ class Status {
 
   Map<String, dynamic> toJson() => _$StatusToJson(this);
 }
+
+
+
+@JsonSerializable(explicitToJson: true)
+class ProfessionalRole {
+  @JsonKey(name: 'id')
+  int? id;
+  @JsonKey(name: 'role_id')
+  int? role;
+  @JsonKey(name: 'name')
+  String? name;
+
+  ProfessionalRole({
+    this.id,
+    this.role,
+  });
+
+  factory ProfessionalRole.fromJson(Map<String, dynamic> json) => _$ProfessionalRoleFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ProfessionalRoleToJson(this);
+
+
+}

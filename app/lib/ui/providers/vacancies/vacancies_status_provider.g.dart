@@ -1,26 +1,27 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'vacancies_provider.dart';
+part of 'vacancies_status_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$vacanciesStateHash() => r'49dfb84011a9e4d17a11ff2bf982fba1629d4ec7';
+String _$vacanciesStatusStateHash() =>
+    r'35b532ec3ec669e07294b81f68f45306ceb016f6';
 
-/// See also [VacanciesState].
-@ProviderFor(VacanciesState)
-final vacanciesStateProvider =
-    AutoDisposeAsyncNotifierProvider<VacanciesState, List<Vacancy>>.internal(
-  VacanciesState.new,
-  name: r'vacanciesStateProvider',
+/// See also [VacanciesStatusState].
+@ProviderFor(VacanciesStatusState)
+final vacanciesStatusStateProvider = AutoDisposeAsyncNotifierProvider<
+    VacanciesStatusState, List<Vacancy>>.internal(
+  VacanciesStatusState.new,
+  name: r'vacanciesStatusStateProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$vacanciesStateHash,
+      : _$vacanciesStatusStateHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$VacanciesState = AutoDisposeAsyncNotifier<List<Vacancy>>;
+typedef _$VacanciesStatusState = AutoDisposeAsyncNotifier<List<Vacancy>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

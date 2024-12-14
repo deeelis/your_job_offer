@@ -25,7 +25,6 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
   final _phoneController = TextEditingController();
   final _dateController = TextEditingController();
   CitizenshipEnum? selectedCitizenship;
-  DateTime? _selectedDate;
 
   @override
   Widget build(BuildContext context) {
@@ -146,7 +145,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                           middleName: _patronymicController.text,
                           phone: _phoneController.text,
                           email: _emailController.text,
-                          birthDate: _selectedDate.toString(),
+                          birthDate: _dateController.text,
                           citizenship: selectedCitizenship);
                       final user = await ref
                           .read(userStateProvider.notifier)

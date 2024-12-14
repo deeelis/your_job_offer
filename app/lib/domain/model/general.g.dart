@@ -166,3 +166,16 @@ const _$StageEnumEnumMap = {
   StageEnum.testing: 'testing',
   StageEnum.interview: 'interview',
 };
+
+ProfessionalRole _$ProfessionalRoleFromJson(Map<String, dynamic> json) =>
+    ProfessionalRole(
+      id: (json['id'] as num?)?.toInt(),
+      role: (json['role_id'] as num?)?.toInt(),
+    )..name = json['name'] as String?;
+
+Map<String, dynamic> _$ProfessionalRoleToJson(ProfessionalRole instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'role_id': instance.role,
+      'name': instance.name,
+    };

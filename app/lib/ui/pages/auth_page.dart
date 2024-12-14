@@ -14,8 +14,10 @@ class AuthPage extends StatefulWidget {
 }
 
 class _AuthPageState extends State<AuthPage> {
-  final String clientId = "JVK1MQ18SJ51T97OQ8VTET0SRM042AJDEGSN9PQ9056LLOEOG90S18L9630GJLM8";
-  final String clientSecret = "GUSTOVDGMU60SFS2MGGL45CJ5TD0GU1LFDSU4F9SG0ONOI1V9BC5AKIDKJF16G7K";
+  final String clientId =
+      "JVK1MQ18SJ51T97OQ8VTET0SRM042AJDEGSN9PQ9056LLOEOG90S18L9630GJLM8";
+  final String clientSecret =
+      "GUSTOVDGMU60SFS2MGGL45CJ5TD0GU1LFDSU4F9SG0ONOI1V9BC5AKIDKJF16G7K";
   final String redirectUri = "myapp://callback";
 
   String? accessToken;
@@ -97,7 +99,6 @@ class _AuthPageState extends State<AuthPage> {
         } else {
           print("Ошибка отправки токенов на бэкенд: ${backendResponse.body}");
         }
-
       } else {
         print("Ошибка получения токена: ${response.body}");
       }
@@ -113,23 +114,24 @@ class _AuthPageState extends State<AuthPage> {
       body: Center(
         child: accessToken == null
             ? ElevatedButton(
-          onPressed: () {
-            _launchAuthUrl();
-            Navigator.pushReplacementNamed(context, Pages.home);
-          },
-          child: const Text('Авторизоваться'),
-        )
+                onPressed: () {
+                  _launchAuthUrl();
+                  Navigator.pushReplacementNamed(context, Pages.home);
+                },
+                child: const Text('Авторизоваться'),
+              )
             : Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('Успешная авторизация!'),
-            Text('Access Token: $accessToken'),
-            Text('Refresh Token: $refreshToken'),
-          ],
-        ),
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Успешная авторизация!'),
+                  Text('Access Token: $accessToken'),
+                  Text('Refresh Token: $refreshToken'),
+                ],
+              ),
       ),
     );
   }
+
   void _launchAuthUrl() async {
     final Uri authUri = Uri.parse(authUrl);
     print(authUri);
