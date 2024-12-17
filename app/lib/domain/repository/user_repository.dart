@@ -13,6 +13,7 @@ abstract interface class UserRepository {
 
   Future<List<Vacancy>> getVacancies(User user);
   Future<User> uploadForm(User user);
-  Future<void> responseToTheVacancy(User user, Vacancy vacancy);
+  Future<User> updateForm(User user);
+  Future<bool> responseToTheVacancy(User user, Vacancy vacancy);
   Future<List<Vacancy>> getStatus(User user);
 }

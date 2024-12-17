@@ -147,7 +147,7 @@ Status _$StatusFromJson(Map<String, dynamic> json) => Status(
       deadline: json['deadline'] as String?,
       date: json['date'] as String?,
       message: json['message'] as String?,
-      stage: $enumDecodeNullable(_$StageEnumEnumMap, json['stage']),
+      status: $enumDecodeNullable(_$StageEnumEnumMap, json['status']),
     );
 
 Map<String, dynamic> _$StatusToJson(Status instance) => <String, dynamic>{
@@ -156,7 +156,7 @@ Map<String, dynamic> _$StatusToJson(Status instance) => <String, dynamic>{
       'deadline': instance.deadline,
       'date': instance.date,
       'message': instance.message,
-      'stage': _$StageEnumEnumMap[instance.stage],
+      'status': _$StageEnumEnumMap[instance.status],
     };
 
 const _$StageEnumEnumMap = {

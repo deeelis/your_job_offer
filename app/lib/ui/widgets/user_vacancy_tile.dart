@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:your_job_offer/core/providers.dart';
 import 'package:your_job_offer/domain/model/enums.dart';
 
 import '../../domain/model/general.dart';
 import '../../domain/model/user.dart';
 import '../../domain/model/vacancy.dart';
+import '../../main.dart';
 
 class UserVacancyTile extends ConsumerStatefulWidget {
   const UserVacancyTile({
@@ -22,25 +22,6 @@ class UserVacancyTile extends ConsumerStatefulWidget {
 }
 
 class _UserVacancyTileState extends ConsumerState<UserVacancyTile> {
-  IconData getStatusIcon(Status? status) {
-    if (status == null) {
-      return Icons.question_mark;
-    }
-    switch (status.stage) {
-      case StageEnum.invite:
-        return Icons.looks_one;
-      case StageEnum.consideration:
-        return Icons.looks_two;
-      case StageEnum.testing:
-        return Icons.looks_3;
-      case StageEnum.interview:
-        return Icons.looks_4;
-      case StageEnum.reject:
-        return Icons.close;
-      default:
-        return Icons.question_mark;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,15 +29,60 @@ class _UserVacancyTileState extends ConsumerState<UserVacancyTile> {
       title: Text(
         widget.vacancy.job ?? '??',
       ),
-      subtitle: Text(widget.vacancy.minSalary.toString() ?? ''),
+      subtitle: Text(widget.vacancy.requirement??''),
       trailing: IconButton(
         onPressed: () async {
-          await ref
-              .read(userRepositoryProvider)
-              .responseToTheVacancy(widget.user, widget.vacancy);
         },
-        icon: Icon(getStatusIcon(widget.vacancy.status?.last)),
+        icon: Icon(getStatusIcon(widget.vacancy.status ?? [])),
       ),
+      onTap: () {
+        Navigator.pushNamed(context, Pages.details, arguments: widget.vacancy);
+      },
     );
+  }
+}
+IconData getStatusIcon(List<Status> statuses) {
+  print(statuses);
+  if(statuses.isEmpty){
+    return Icons.question_mark;
+  }
+  var status =statuses.last;
+  print(status.toJson().toString());
+  switch (status.status) {
+    case StageEnum.invite:
+      return Icons.edit_calendar;
+    case StageEnum.consideration:
+      return Icons.search;
+    case StageEnum.testing:
+      return Icons.task;
+    case StageEnum.interview:
+      return Icons.question_answer_outlined;
+    case StageEnum.reject:
+      return Icons.cancel_outlined;
+    default:
+      return Icons.question_mark;
+  }
+}
+
+String getStatusText(List<Status> statuses) {
+  print(statuses);
+  if(statuses.isEmpty){
+    return "Неизвестно";
+  }
+  var status =statuses.last;
+  print(status.toJson().toString());
+  switch (status.status) {
+    case StageEnum.invite:
+      return "Нужно дозаполнить информацию";
+    case StageEnum.consideration:
+      return "Рассмотрение";
+    case StageEnum.testing:
+      return "Тестирование";
+    case StageEnum.interview:
+      return "Назначено собеседование";
+    case StageEnum.reject:
+      return "Отказ";
+    default:
+      return "Неизвестно";
   }
 }

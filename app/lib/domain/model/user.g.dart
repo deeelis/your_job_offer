@@ -10,7 +10,9 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
       id: (json['id'] as num?)?.toInt(),
       login: json['login'] as String,
       password: json['password'] as String,
-      birthDate: json['birthDate'] as String?,
+      birthDate: json['birth_date'] == null
+          ? null
+          : DateTime.parse(json['birth_date'] as String),
       firstName: json['first_name'] as String?,
       lastName: json['last_name'] as String?,
       middleName: json['middle_name'] as String?,
@@ -46,6 +48,8 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
           ? null
           : ProfessionalRole.fromJson(
               json['professional_role'] as Map<String, dynamic>),
+      innerEmail: json['inner_email'] as String?,
+      innerEmailPassword: json['inner_email_password'] as String?,
       projects: (json['projects'] as List<dynamic>?)
               ?.map((e) => Project.fromJson(e as Map<String, dynamic>))
               .toList() ??
@@ -80,7 +84,7 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'id': instance.id,
       'login': instance.login,
       'password': instance.password,
-      'birthDate': instance.birthDate,
+      'birth_date': instance.birthDate?.toIso8601String(),
       'first_name': instance.firstName,
       'last_name': instance.lastName,
       'middle_name': instance.middleName,
@@ -105,6 +109,8 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'education_level': _$EducationLevelEnumEnumMap[instance.educationLevel],
       'citizenship': _$CitizenshipEnumEnumMap[instance.citizenship],
       'professional_role': instance.professionalRole?.toJson(),
+      'inner_email': instance.innerEmail,
+      'inner_email_password': instance.innerEmailPassword,
       'projects': instance.projects?.map((e) => e.toJson()).toList(),
       'achievements': instance.achievements?.map((e) => e.toJson()).toList(),
       'work_experiences':

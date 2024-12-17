@@ -1,5 +1,6 @@
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:your_job_offer/ui/providers/user/user_provider.dart';
 
@@ -22,7 +23,7 @@ class FormArguments {
   final User user;
   final bool isEdit;
 
-  FormArguments({required this.user, this.isEdit=false});
+  FormArguments({required this.user, this.isEdit = false});
 }
 
 class _FormPageState extends ConsumerState<FormPage> {
@@ -65,7 +66,7 @@ class _FormPageState extends ConsumerState<FormPage> {
     super.initState();
 
     user = widget.args.user;
-    print(user.toString());
+    print(user.toJson().toString());
     firstNameController = TextEditingController(text: user.firstName ?? '');
     lastNameController = TextEditingController(text: user.lastName ?? '');
     emailController = TextEditingController(text: user.email ?? '');
@@ -80,7 +81,7 @@ class _FormPageState extends ConsumerState<FormPage> {
         text: user.workHours != null ? user.workHours.toString() : '');
 
     selectedGender = user.gender ?? GenderEnum.male;
-    selectedWorkType = user.workType;
+    // selectedWorkType = user.workType;
     selectedBusinessTripReadiness = user.businessTripReadiness;
     selectedRelocation = user.relocation;
     selectedEmployment = user.employment;
@@ -88,8 +89,8 @@ class _FormPageState extends ConsumerState<FormPage> {
     selectedCitizenship = user.citizenship ?? CitizenshipEnum.rf;
     selectedEducationLevel =
         user.educationLevel ?? EducationLevelEnum.secondary;
-
-    selectedBirthDate = DateTime.tryParse(user.birthDate ?? "");
+    print(user.birthDate);
+    selectedBirthDate = user.birthDate;
     selectedRole = user.professionalRole;
     // selectedCountry = user.country;
     // selectedCity = user.city;
@@ -98,12 +99,10 @@ class _FormPageState extends ConsumerState<FormPage> {
     workExperiences.addAll(user.workExperiences ?? []);
     projects.addAll(user.projects ?? []);
     skills.addAll(user.skills ?? []);
-    List<Language>rightLanguages=[];
-    var ll=languagesMap
-        .map((e) => e['name'])
-        .toList();
-    for (Language l in user.languages ?? []){
-      if(ll.contains(l.name?.trim())){
+    List<Language> rightLanguages = [];
+    var ll = languagesMap.map((e) => e['name']).toList();
+    for (Language l in user.languages ?? []) {
+      if (ll.contains(l.name?.trim())) {
         rightLanguages.add(l);
       }
     }
@@ -111,75 +110,16 @@ class _FormPageState extends ConsumerState<FormPage> {
   }
 
   bool validateNecssecaryFields() {
-    if (firstNameController.text.isEmpty) {
+    if (educations.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Нужно заполнить имя")),
-      );
-      return false;
-    } else if (lastNameController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Нужно заполнить фамилию")),
-      );
-      return false;
-    } else if (phoneController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Нужно заполнить телефон")),
-      );
-      return false;
-    } else if (emailController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Нужно заполнить почту")),
-      );
-      return false;
-    } else if (selectedCitizenship == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Нужно заполнить гражданство")),
-      );
-      return false;
-    } else if (selectedCountry == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Нужно выбрать страну")),
-      );
-      return false;
-    } else if (selectedCity == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Нужно выбрать город")),
-      );
-      return false;
-    } else if (selectedRole == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Нужно выбрать роль")),
-      );
-      return false;
-    } else if (selectedEducationLevel == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Нужно выбрать уровень образования")),
-      );
-      return false;
-    } else if (educations.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Нужно заполнить хотя бы одно образование")),
-      );
-      return false;
-    } else if (educations[0].institution == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Нужно заполнить название учебного заведения")),
-      );
-      return false;
-    } else if (educations[0].finishDate == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Нужно заполнить дату окончания")),
-      );
-      return false;
-    } else if (languages.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Нужно добавить хотя бы один язык")),
+        const SnackBar(
+            content: Text("Нужно заполнить хотя бы одно образование")),
       );
       return false;
     }
-    else if (languages[0].level==null) {
+    else if (languages.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Нужно выбрать уровень владения языком")),
+        const SnackBar(content: Text("Нужно добавить хотя бы один язык")),
       );
       return false;
     }
@@ -195,37 +135,44 @@ class _FormPageState extends ConsumerState<FormPage> {
       user.phone = phoneController.text;
       user.email = emailController.text;
       user.description = descriptionController.text;
+
       user.minSalary = int.tryParse(minSalaryController.text);
       user.maxSalary = int.tryParse(maxSalaryController.text);
       user.workHours = int.tryParse(workHoursController.text);
 
       user.gender = selectedGender;
-      user.workType = selectedWorkType;
+      // user.workType = selectedWorkType;
       user.businessTripReadiness = selectedBusinessTripReadiness;
       user.relocation = selectedRelocation;
       user.employment = selectedEmployment;
       user.schedule = selectedSchedule;
       user.educationLevel = selectedEducationLevel;
 
-      user.birthDate = selectedBirthDate.toString();
+      user.birthDate = selectedBirthDate;
       user.country = selectedCountry;
       user.city = selectedCity;
 
       user.educations = educations;
       user.workExperiences = workExperiences;
       user.skills = skills;
-      user.languages=languages;
-      user.professionalRole=selectedRole;
+      user.languages = languages;
+      user.professionalRole = selectedRole;
+      user.projects=projects;
       print(user.professionalRole?.name);
-      await ref.read(userStateProvider.notifier).uploadForm(user);
-      if (context.mounted) {
+      if(!widget.args.isEdit) {
+        await ref.read(userStateProvider.notifier).uploadForm(user);
+      }
+      else{
+        await ref.read(userStateProvider.notifier).updateForm(user);
+      }
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Form saved successfully!")),
         );
-        if(!widget.args.isEdit) {
+        if (!widget.args.isEdit) {
           Navigator.pushNamedAndRemoveUntil(
               context, Pages.home, (route) => false);
-        }else{
+        } else {
           Navigator.pop(context);
         }
       }
@@ -273,6 +220,7 @@ class _FormPageState extends ConsumerState<FormPage> {
               TextFormField(
                 controller: lastNameController,
                 decoration: const InputDecoration(labelText: "Фамилия"),
+                textCapitalization: TextCapitalization.sentences,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Введите фамилию';
@@ -283,6 +231,7 @@ class _FormPageState extends ConsumerState<FormPage> {
               TextFormField(
                 controller: firstNameController,
                 decoration: const InputDecoration(labelText: "Имя"),
+                textCapitalization: TextCapitalization.sentences,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Введите имя';
@@ -293,6 +242,7 @@ class _FormPageState extends ConsumerState<FormPage> {
               TextFormField(
                 controller: middleNameController,
                 decoration: const InputDecoration(labelText: 'Отчество'),
+                textCapitalization: TextCapitalization.sentences,
               ),
               GestureDetector(
                 onTap: _selectBirthDate,
@@ -302,6 +252,12 @@ class _FormPageState extends ConsumerState<FormPage> {
                       labelText: "Дата рождения",
                       hintText: "Выберите дату",
                     ),
+                    validator: (value) {
+                      // if (value == null || value.isEmpty) {
+                      //   return 'Введите дату рождения';
+                      // }
+                      return null;
+                    },
                     controller: TextEditingController(
                       text: selectedBirthDate != null
                           ? "${selectedBirthDate!.day}.${selectedBirthDate!.month}.${selectedBirthDate!.year}"
@@ -320,7 +276,17 @@ class _FormPageState extends ConsumerState<FormPage> {
               TextFormField(
                 controller: phoneController,
                 decoration: const InputDecoration(labelText: 'Телефон'),
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.digitsOnly
+
+                ],
                 keyboardType: TextInputType.phone,
+                validator: (value) {
+                  if (value == null || value.isEmpty || value.length!=11 || !(value[0]=='8' || value[0]=='7' )) {
+                    return 'Введите корректный телефон';
+                  }
+                  return null;
+                },
               ),
               TextFormField(
                 controller: emailController,
@@ -339,17 +305,22 @@ class _FormPageState extends ConsumerState<FormPage> {
                 selectedCitizenship,
                 (value) => setState(() => selectedCitizenship = value),
                 (value) => value.value,
+                validator: (value) {
+                  if (value == null) {
+                    return 'Выберете гражданство';
+                  }
+                  return null;
+                },
               ),
-
               DropdownSearch<ProfessionalRole>(
                 items: professionalRoles
                     .map((e) => ProfessionalRole.fromJson(e))
                     .toList(),
                 dropdownDecoratorProps: const DropDownDecoratorProps(
                     dropdownSearchDecoration: InputDecoration(
-                      labelText: "Выберите роль",
-                      hintText: "Роль",
-                    )),
+                  labelText: "Выберите роль",
+                  hintText: "Роль",
+                )),
                 onChanged: (value) {
                   setState(() {
                     selectedRole = value;
@@ -360,6 +331,12 @@ class _FormPageState extends ConsumerState<FormPage> {
                 popupProps: const PopupProps.menu(
                   showSearchBox: true,
                 ),
+                validator: (value) {
+                  if (value == null) {
+                    return 'Выберите роль';
+                  }
+                  return null;
+                },
               ),
               TextFormField(
                 controller: descriptionController,
@@ -380,12 +357,19 @@ class _FormPageState extends ConsumerState<FormPage> {
                     selectedCity = null;
                   });
                 },
+                selectedItem: selectedCountry,
                 itemAsString: (item) => item.name ?? '',
                 dropdownDecoratorProps: const DropDownDecoratorProps(
                     dropdownSearchDecoration: InputDecoration(
                   labelText: "Выберите страну",
                   hintText: "Страна",
                 )),
+                validator: (value) {
+                  if (value == null ) {
+                    return 'Выберите страну';
+                  }
+                  return null;
+                },
                 // showSearchBox: true,
               ),
               if (selectedCountry != null)
@@ -400,6 +384,7 @@ class _FormPageState extends ConsumerState<FormPage> {
                     labelText: "Выберите город",
                     hintText: "Город",
                   )),
+
                   onChanged: (value) {
                     setState(() {
                       selectedCity = value;
@@ -410,6 +395,12 @@ class _FormPageState extends ConsumerState<FormPage> {
                   popupProps: const PopupProps.menu(
                     showSearchBox: true,
                   ),
+                  validator: (value) {
+                    if (value == null ) {
+                      return 'Выберите город';
+                    }
+                    return null;
+                  },
                 ),
               _buildDynamicList<Skill>(
                 "Добавить навык",
@@ -424,22 +415,33 @@ class _FormPageState extends ConsumerState<FormPage> {
                 selectedEducationLevel,
                 (value) => setState(() => selectedEducationLevel = value),
                 (value) => value.value,
+                validator: (value) {
+                  if (value == null ) {
+                    return 'Выберите уровень образования';
+                  }
+                  return null;
+                },
               ),
               _buildDynamicList<Education>(
                 "Добавить образование",
                 educations,
                 (education) => _buildEducationForm(education),
-                () => setState(() => educations
-                    .add(Education())),
+                () => setState(() => educations.add(Education())),
                 (index) => setState(() => educations.removeAt(index)),
               ),
               _buildDynamicList<Language>(
                 "Добавить язык",
                 languages,
-                    (language) => _buildLanguageForm(language),
-                    () => setState(() => languages
-                    .add(Language())),
-                    (index) => setState(() => languages.removeAt(index)),
+                (language) => _buildLanguageForm(language),
+                () => setState(() => languages.add(Language())),
+                (index) => setState(() => languages.removeAt(index)),
+              ),
+              _buildDynamicList<Project>(
+                "Добавить проект",
+                projects,
+                    (project) => _buildProjectForm(project),
+                    () => setState(() => projects.add(Project())),
+                    (index) => setState(() => projects.removeAt(index)),
               ),
               TextFormField(
                 controller: minSalaryController,
@@ -465,13 +467,13 @@ class _FormPageState extends ConsumerState<FormPage> {
                 (value) => setState(() => selectedEmployment = value),
                 (value) => value.value,
               ),
-              _buildDropdown<WorkTypeEnum>(
-                "Тип работы",
-                WorkTypeEnum.values,
-                selectedWorkType,
-                (value) => setState(() => selectedWorkType = value),
-                (value) => value.value,
-              ),
+              // _buildDropdown<WorkTypeEnum>(
+              //   "Тип работы",
+              //   WorkTypeEnum.values,
+              //   selectedWorkType,
+              //   (value) => setState(() => selectedWorkType = value),
+              //   (value) => value.value,
+              // ),
               _buildDropdown<ScheduleEnum>(
                 "График работы",
                 ScheduleEnum.values,
@@ -510,21 +512,27 @@ class _FormPageState extends ConsumerState<FormPage> {
   }
 
   Widget _buildDropdown<T extends Enum>(
-      String label,
-      List<T> values,
-      T? selectedValue,
-      ValueChanged<T?> onChanged,
-      String Function(T) toStringValue) {
-    var items=values
+    String label,
+    List<T> values,
+    T? selectedValue,
+    ValueChanged<T?> onChanged,
+    String Function(T) toStringValue, {
+    String? Function(T?)? validator,
+  }) {
+    var items = values
         .map((value) =>
-        DropdownMenuItem(value: value, child: Text(toStringValue(value))))
+            DropdownMenuItem(value: value, child: Text(toStringValue(value))))
         .toList();
-    items.add(const DropdownMenuItem(child: Text("-"), value: null,));
+    items.add(const DropdownMenuItem(
+      child: Text("-"),
+      value: null,
+    ));
     return DropdownButtonFormField<T>(
       decoration: InputDecoration(labelText: label),
       value: selectedValue,
       onChanged: onChanged,
       items: items,
+      validator: validator,
     );
   }
 
@@ -585,7 +593,13 @@ class _FormPageState extends ConsumerState<FormPage> {
             initialValue: education.institution,
             decoration:
                 const InputDecoration(labelText: "Название учебного заведения"),
-            onChanged: (value) => education.institution = value,
+            onChanged: (value) => education.institution = value,validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Введите название учебного заведения';
+            }
+            return null;
+          },
+
           ),
           TextFormField(
             initialValue: education.major,
@@ -653,6 +667,12 @@ class _FormPageState extends ConsumerState<FormPage> {
                       ? "${education.finishDate!.day}.${education.finishDate!.month}.${education.finishDate!.year}"
                       : null,
                 ),
+                validator: (value) {
+                  if (value == null ) {
+                    return 'Выберите дату окончания';
+                  }
+                  return null;
+                },
               ),
             ),
           ),
@@ -667,14 +687,12 @@ class _FormPageState extends ConsumerState<FormPage> {
       child: Column(
         children: [
           DropdownSearch<Language>(
-            items: languagesMap
-                .map((e) => Language.fromJson(e))
-                .toList(),
+            items: languagesMap.map((e) => Language.fromJson(e)).toList(),
             dropdownDecoratorProps: const DropDownDecoratorProps(
                 dropdownSearchDecoration: InputDecoration(
-                  labelText: "Выберите язык",
-                  hintText: "Язык",
-                )),
+              labelText: "Выберите язык",
+              hintText: "Язык",
+            )),
             onChanged: (value) {
               setState(() {
                 language.name = value?.name;
@@ -685,13 +703,50 @@ class _FormPageState extends ConsumerState<FormPage> {
             popupProps: const PopupProps.menu(
               showSearchBox: true,
             ),
+            validator: (value) {
+              if (value == null  ) {
+                return 'Выберите язык ';
+              }
+              return null;
+            },
           ),
           _buildDropdown<LanguageLevelEnum>(
             "Уровень языка",
             LanguageLevelEnum.values,
             language.level,
-                (value) => setState(() => language.level = value),
-                (value) => value.value,
+            (value) => setState(() => language.level = value),
+            (value) => value.value,
+            validator: (value) {
+              if (value == null ) {
+                return 'Выберите уровень языка';
+              }
+              return null;
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProjectForm(Project project) {
+    return Padding(
+      padding: const EdgeInsets.all(8),
+      child: Column(
+        children: [
+          TextFormField(
+            initialValue: project.name,
+            decoration: const InputDecoration(labelText: "Название проекта"),
+            onChanged: (value) => project.name = value,
+          ),
+          TextFormField(
+            initialValue: project.description,
+            decoration: const InputDecoration(labelText: "Описание"),
+            onChanged: (value) => project.description = value,
+          ),
+          TextFormField(
+            initialValue: project.link,
+            decoration: const InputDecoration(labelText: "Ссылка"),
+            onChanged: (value) => project.link = value,
           ),
         ],
       ),
@@ -708,16 +763,34 @@ class _FormPageState extends ConsumerState<FormPage> {
               initialValue: workExperience.job,
               decoration: const InputDecoration(labelText: "Должность"),
               onChanged: (value) => workExperience.job = value,
+              validator: (value) {
+                if (value == null ) {
+                  return 'Введите должность';
+                }
+                return null;
+              },
             ),
             TextFormField(
               initialValue: workExperience.workPlace,
               decoration: const InputDecoration(labelText: "Место работы"),
               onChanged: (value) => workExperience.workPlace = value,
+              validator: (value) {
+                if (value == null ) {
+                  return 'Введите место работы';
+                }
+                return null;
+              },
             ),
             TextFormField(
               initialValue: workExperience.description,
               decoration: const InputDecoration(labelText: "Описание"),
               onChanged: (value) => workExperience.description = value,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Введите описание';
+                }
+                return null;
+              },
             ),
             GestureDetector(
               onTap: () async {
@@ -743,6 +816,12 @@ class _FormPageState extends ConsumerState<FormPage> {
                         ? "${workExperience.startDate!.day}.${workExperience.startDate!.month}.${workExperience.startDate!.year}"
                         : null,
                   ),
+                  validator: (value) {
+                    if (value == null ) {
+                      return 'Введите даты начала';
+                    }
+                    return null;
+                  },
                 ),
               ),
             ),
@@ -751,7 +830,7 @@ class _FormPageState extends ConsumerState<FormPage> {
                 var date = await showDatePicker(
                   context: context,
                   firstDate: DateTime(1950),
-                  lastDate: DateTime.now(),
+                  lastDate: DateTime(2100),
                 );
                 if (date != null) {
                   setState(() {

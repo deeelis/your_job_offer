@@ -14,8 +14,8 @@ class User {
   String login;
   @JsonKey(name: 'password')
   String password;
-  @JsonKey(name: 'birthDate')
-  String? birthDate;
+  @JsonKey(name: 'birth_date')
+  DateTime? birthDate;
   @JsonKey(name: 'first_name')
   String? firstName;
   @JsonKey(name: 'last_name')
@@ -62,6 +62,10 @@ class User {
   CitizenshipEnum? citizenship;
   @JsonKey(name: 'professional_role')
   ProfessionalRole? professionalRole;
+  @JsonKey(name: 'inner_email')
+  String? innerEmail;
+  @JsonKey(name: 'inner_email_password')
+  String? innerEmailPassword;
   @JsonKey(name: 'projects')
   List<Project>? projects;
   @JsonKey(name: 'achievements')
@@ -105,6 +109,8 @@ class User {
     this.educationLevel,
     this.citizenship,
     this.professionalRole,
+    this.innerEmail,
+    this.innerEmailPassword,
     this.projects = const [],
     this.achievements = const [],
     this.workExperiences = const [],

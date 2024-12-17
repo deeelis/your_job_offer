@@ -1,25 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:your_job_offer/ui/providers/user/user_provider.dart';
 import 'dart:convert';
 
+import '../../domain/model/user.dart';
 import '../../main.dart';
 
-class AuthPage extends StatefulWidget {
+class AuthPage extends ConsumerStatefulWidget {
   const AuthPage({super.key});
 
   @override
-  _AuthPageState createState() => _AuthPageState();
+  ConsumerState<AuthPage> createState() => _AuthPageState();
 }
 
-class _AuthPageState extends State<AuthPage> {
+class _AuthPageState extends ConsumerState<AuthPage> {
   final String clientId =
       "JVK1MQ18SJ51T97OQ8VTET0SRM042AJDEGSN9PQ9056LLOEOG90S18L9630GJLM8";
   final String clientSecret =
       "GUSTOVDGMU60SFS2MGGL45CJ5TD0GU1LFDSU4F9SG0ONOI1V9BC5AKIDKJF16G7K";
   final String redirectUri = "myapp://callback";
-
+  late User user;
   String? accessToken;
   String? refreshToken;
 
@@ -83,12 +86,12 @@ class _AuthPageState extends State<AuthPage> {
         print("Access Token: $accessToken");
         print("Refresh Token: $refreshToken");
         print("EXPIRED: ${tokenData["expires_in"]}");
-
+        print(user.login);
         final backendResponse = await http.post(
           Uri.parse(backendUrl),
           headers: {'Content-Type': 'application/json'},
           body: json.encode({
-            'login': 'test', // нужно доставать откуда-то логин
+            'login': user.login, // нужно доставать откуда-то логин
             'access': accessToken,
             'refresh': refreshToken,
           }),
@@ -109,14 +112,14 @@ class _AuthPageState extends State<AuthPage> {
 
   @override
   Widget build(BuildContext context) {
+    user=ref.watch(userStateProvider).valueOrNull ?? User.getEmptyUser();
     return Scaffold(
-      appBar: AppBar(title: const Text('HH.ru Авторизация')),
+      appBar: AppBar(title: const Text('HH.ru Авторизация2')),
       body: Center(
         child: accessToken == null
             ? ElevatedButton(
                 onPressed: () {
                   _launchAuthUrl();
-                  Navigator.pushReplacementNamed(context, Pages.home);
                 },
                 child: const Text('Авторизоваться'),
               )
@@ -124,8 +127,12 @@ class _AuthPageState extends State<AuthPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text('Успешная авторизация!'),
-                  Text('Access Token: $accessToken'),
-                  Text('Refresh Token: $refreshToken'),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, Pages.cvUpload);
+                    },
+                    child: const Text('Продолжить регистрацию'),
+                  )
                 ],
               ),
       ),

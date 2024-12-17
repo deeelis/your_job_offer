@@ -249,8 +249,8 @@ class Status {
   String? date;
   @JsonKey(name: 'message')
   String? message;
-  @JsonKey(name: 'stage')
-  StageEnum? stage;
+  @JsonKey(name: 'status')
+  StageEnum? status;
 
   Status({
     this.id,
@@ -258,7 +258,7 @@ class Status {
     this.deadline,
     this.date,
     this.message,
-    this.stage,
+    this.status,
   });
 
   factory Status.fromJson(Map<String, dynamic> json) => _$StatusFromJson(json);

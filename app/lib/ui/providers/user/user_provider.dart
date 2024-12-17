@@ -45,4 +45,9 @@ class UserState extends _$UserState {
     user = await ref.read(userRepositoryProvider).uploadForm(user);
     state = AsyncValue.data(user);
   }
+
+  Future<void> updateForm(User user) async {
+    user = await ref.read(userRepositoryProvider).updateForm(user);
+    state = AsyncValue.data(user);
+  }
 }

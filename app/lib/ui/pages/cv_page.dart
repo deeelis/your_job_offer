@@ -36,7 +36,7 @@ class _CVUploadPageState extends ConsumerState<CVUploadPage> {
     }
   }
 
-  Future<void> _uploadFile() async {
+  Future<void> _uploadFile(User user) async {
     if (selectedFile == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please select a file first.')),
@@ -52,32 +52,36 @@ class _CVUploadPageState extends ConsumerState<CVUploadPage> {
       await http.MultipartFile.fromPath('file', selectedFile!.path),
     );
     request.headers['Content-Type'] = 'application/pdf';
-    request.fields['login'] = 'test';
-    request.fields['password'] = 'test';
+    request.headers['Accept'] = 'application/json';
+    request.fields['login'] = user.login;
+    request.fields['password'] = user.password;
 
     final response = await http.Response.fromStream(await request.send());
-    try {
-      final userModel = await _parseResponse(response);
-      setState(() {
-        _userModel = userModel;
-      });
-    } catch (e) {
-      _showError('Failed to parse user data: $e');
-    }
+
     if (response.statusCode == 200) {
-      print(_userModel.toString());
-      ref.read(userStateProvider.notifier).updateUser(_userModel!);
-      if (context.mounted) {
+      try {
+        final userModel = await _parseResponse(response);
+        setState(() {
+          _userModel = userModel;
+        });
+      } catch (e) {
+        _showError('Failed to parse user data: $e');
+      }
+      print(_userModel?.toJson().toString());
+      ref.read(userStateProvider.notifier).updateUser(_userModel?? User.getEmptyUser());
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('File uploaded successfully!')),
         );
         Navigator.pushNamed(context, Pages.form,
-            arguments: FormArguments(user: _userModel!));
+            arguments: FormArguments(user: _userModel?? User.getEmptyUser()));
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
+      if(mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('File upload failed.')),
       );
+      }
     }
   }
 
@@ -99,9 +103,15 @@ class _CVUploadPageState extends ConsumerState<CVUploadPage> {
 
   Future<User> _parseResponse(http.Response response) async {
     if (response.statusCode == 200) {
+      print(response.body);
       final jsonResponse = jsonDecode(jsonDecode(response.body));
       return User.fromJson(jsonResponse);
     } else {
+      if(mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
       throw Exception(
           'Failed to parse user data. Status code: ${response.statusCode}');
     }
@@ -162,7 +172,7 @@ class _CVUploadPageState extends ConsumerState<CVUploadPage> {
                     setState(() {
                       isLoading = true;
                     });
-                    await _uploadFile();
+                    await _uploadFile(user);
                     setState(() {
                       isLoading = false;
                     });

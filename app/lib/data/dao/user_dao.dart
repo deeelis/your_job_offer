@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:your_job_offer/data/dto/list_vacancies_dto.dart';
+import 'package:your_job_offer/data/dto/user_vacancy_dto.dart';
 import 'package:your_job_offer/domain/model/vacancy.dart';
 
 import '../../domain/model/user.dart';
@@ -16,6 +17,7 @@ class UserDao {
   static const String getVacanciesPath = '/get_vacancies';
   static const String formPath = '/form';
   static const String getStatusPath = '/get_status';
+  static const String applyPath = "/apply";
 
   Future<User> registerUser(
     User user,
@@ -31,6 +33,7 @@ class UserDao {
     if (response.statusCode != 200) {
       throw Exception(response.body);
     }
+    print('REQISTRATION ${response.body}');
     return User.fromJson(json.decode(response.body));
     // return user;
   }
@@ -73,6 +76,20 @@ class UserDao {
       body: json.encode(user.toJson()),
     );
     if (response.statusCode != 200) {
+      print(response.statusCode);
+      throw Exception(response.body);
+    }
+    return user;
+  }
+  Future<User> updateForm(User user) async {
+    var url = '$baseUrl$formPath/update';
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(user.toJson()),
+    );
+    if (response.statusCode != 200) {
+      print(response.statusCode);
       throw Exception(response.body);
     }
     return user;
@@ -95,7 +112,21 @@ class UserDao {
     return prefs.setString("password", user.password);
   }
 
-  Future<void> responseToTheVacancy(User user, Vacancy vacancy) async {
+  Future<bool> responseToTheVacancy(User user, Vacancy vacancy) async {
+    var url = '$baseUrl$applyPath';
+    UserVacancyDto userVacancyDto=UserVacancyDto(user: user, vacancy: vacancy);
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {"Content-Type": "application/json"},
+      body: json.encode(userVacancyDto.toJson()),
+    );
+    if (response.statusCode != 200) {
+      return false;
+    }
+    print('applying');
+    print(response.body);
+    return true;
+
 
   }
   Future<List<Vacancy>> getStatus(User user) async {

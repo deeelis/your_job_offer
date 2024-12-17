@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:your_job_offer/ui/providers/vacancies/filters_provider.dart';
 import '../../domain/model/enums.dart';
 import '../../domain/model/user.dart';
 import '../providers/vacancies/vacancies_provider.dart';
@@ -51,7 +52,7 @@ class DialogEditFilterState extends ConsumerState<DialogEditFilter> {
 
   @override
   Widget build(BuildContext context) {
-    // user.minSalary=50000;
+
     return Dialog(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -146,13 +147,13 @@ class DialogEditFilterState extends ConsumerState<DialogEditFilter> {
                 (value) => setState(() => selectedEmployment = value),
                 (value) => value.value,
               ),
-              _buildDropdown<WorkTypeEnum>(
-                "Тип работы",
-                WorkTypeEnum.values,
-                selectedWorkType,
-                (value) => setState(() => selectedWorkType = value),
-                (value) => value.value,
-              ),
+              // _buildDropdown<WorkTypeEnum>(
+              //   "Тип работы",
+              //   WorkTypeEnum.values,
+              //   selectedWorkType,
+              //   (value) => setState(() => selectedWorkType = value),
+              //   (value) => value.value,
+              // ),
               _buildDropdown<ScheduleEnum>(
                 "График работы",
                 ScheduleEnum.values,
@@ -180,7 +181,8 @@ class DialogEditFilterState extends ConsumerState<DialogEditFilter> {
                 children: [
                   TextButton(
                     child: const Text('Cancel'),
-                    onPressed: () {
+                    onPressed: () async {
+                      await ref.read(filterStateProvider.notifier).updateFilter(null);
                       Navigator.of(context).pop();
                     },
                   ),
@@ -204,12 +206,12 @@ class DialogEditFilterState extends ConsumerState<DialogEditFilter> {
                       newUser.businessTripReadiness =
                           selectedBusinessTripReadiness;
                       newUser.relocation = selectedRelocation;
-                      newUser.workType = selectedWorkType;
+                      // newUser.workType = selectedWorkType;
                       newUser.employment = selectedEmployment;
                       await ref
                           .read(vacanciesStateProvider.notifier)
                           .getVacancies(newUser);
-
+                      await ref.read(filterStateProvider.notifier).updateFilter(newUser);
                       if (context.mounted) {
                         Navigator.of(context).pop();
                       }
@@ -230,6 +232,18 @@ class DialogEditFilterState extends ConsumerState<DialogEditFilter> {
       T? selectedValue,
       ValueChanged<T?> onChanged,
       String Function(T) toStringValue) {
+
+    var items = values
+        .map((value) =>
+        DropdownMenuItem(value: value, child: Text(
+          toStringValue(value),
+          overflow: TextOverflow.fade,
+        )))
+        .toList();
+    items.add(const DropdownMenuItem(
+      child: Text("-"),
+      value: null,
+    ));
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: DropdownButtonFormField<T>(
@@ -238,14 +252,7 @@ class DialogEditFilterState extends ConsumerState<DialogEditFilter> {
         decoration: InputDecoration(labelText: label),
         value: selectedValue,
         onChanged: onChanged,
-        items: values
-            .map((value) => DropdownMenuItem(
-                value: value,
-                child: Text(
-                  toStringValue(value),
-                  overflow: TextOverflow.fade,
-                )))
-            .toList(),
+        items:items
       ),
     );
   }

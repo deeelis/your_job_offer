@@ -6,7 +6,7 @@ part of 'vacancies_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$vacanciesStateHash() => r'49dfb84011a9e4d17a11ff2bf982fba1629d4ec7';
+String _$vacanciesStateHash() => r'72af5abe39e38df6fd4ceedadb3f13cfac0152a2';
 
 /// See also [VacanciesState].
 @ProviderFor(VacanciesState)

@@ -58,7 +58,7 @@ class Vacancy {
   @JsonKey(name: 'id_vacancy_from_source')
   final String? idVacancyFromSource;
   @JsonKey(name: 'status')
-  final List<Status>? status;
+   List<Status>? status;
   @JsonKey(name: 'professional_role')
   ProfessionalRole? professionalRole;
 

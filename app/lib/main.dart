@@ -8,6 +8,9 @@ import 'package:your_job_offer/ui/pages/login_page.dart';
 import 'package:your_job_offer/ui/pages/profile_page.dart';
 import 'package:your_job_offer/ui/pages/registration_page.dart';
 import 'package:your_job_offer/ui/pages/user_vacancy_page.dart';
+import 'package:your_job_offer/ui/pages/vacancy_details_page.dart';
+
+import 'domain/model/vacancy.dart';
 
 void main() {
   runApp(
@@ -22,6 +25,7 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
       title: 'Your job offer',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -40,6 +44,7 @@ class MyApp extends ConsumerWidget {
               return const CVUploadPage();
             case Pages.form:
               if (arguments is FormArguments) {
+                print(arguments);
                 return FormPage(arguments);
               } else {
                 return const LoginPage();
@@ -52,6 +57,12 @@ class MyApp extends ConsumerWidget {
             //   return const SettingsPage();
             case Pages.userVacancies:
               return const UserVacancyPage();
+            case Pages.details:
+              if (arguments is Vacancy) {
+                return VacancyDetailsPage(vacancy: arguments);
+              }else {
+                return const HomePage();
+              }
             default:
               return const LoginPage();
           }
@@ -71,4 +82,5 @@ class Pages {
   static const String settings = '/settings';
   static const String userVacancies = '/user_vacancies';
   static const String authHH = '/authHH';
+  static const String details = '/details';
 }

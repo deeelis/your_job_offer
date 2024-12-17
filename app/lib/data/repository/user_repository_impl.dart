@@ -47,10 +47,16 @@ class UserRepositoryImpl implements UserRepository {
     await userDao.setUser(user);
     return user;
   }
+  @override
+  Future<User> updateForm(User user) async {
+    user = await userDao.updateForm(user);
+    await userDao.setUser(user);
+    return user;
+  }
 
   @override
-  Future<void> responseToTheVacancy(User user, Vacancy vacancy) async {
-    await userDao.responseToTheVacancy(user, vacancy);
+  Future<bool> responseToTheVacancy(User user, Vacancy vacancy) async {
+    return await userDao.responseToTheVacancy(user, vacancy);
   }
 
   @override

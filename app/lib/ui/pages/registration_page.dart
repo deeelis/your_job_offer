@@ -62,6 +62,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                 TextFormField(
                   controller: _firstNameController,
                   decoration: const InputDecoration(labelText: 'Имя'),
+                  textCapitalization: TextCapitalization.sentences,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Пожалуйста, введите имя';
@@ -72,6 +73,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                 TextFormField(
                   controller: _lastNameController,
                   decoration: const InputDecoration(labelText: 'Фамилия'),
+                  textCapitalization: TextCapitalization.sentences,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Пожалуйста, введите фамилию';
@@ -82,6 +84,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                 TextFormField(
                   controller: _patronymicController,
                   decoration: const InputDecoration(labelText: 'Отчество'),
+                  textCapitalization: TextCapitalization.sentences,
                 ),
                 TextFormField(
                   controller: _emailController,
@@ -138,22 +141,23 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                     if (_formKey.currentState!.validate() &&
                         selectedCitizenship != null) {
                       final rawUser = User(
-                          login: _loginController.text,
-                          password: _passwordController.text,
-                          firstName: _firstNameController.text,
-                          lastName: _lastNameController.text,
-                          middleName: _patronymicController.text,
-                          phone: _phoneController.text,
-                          email: _emailController.text,
-                          birthDate: _dateController.text,
-                          citizenship: selectedCitizenship);
+                        login: _loginController.text,
+                        password: _passwordController.text,
+                        firstName: _firstNameController.text,
+                        lastName: _lastNameController.text,
+                        middleName: _patronymicController.text,
+                        phone: _phoneController.text,
+                        email: _emailController.text,
+                        birthDate: DateTime.tryParse(_dateController.text),
+                        citizenship: selectedCitizenship,
+                      );
                       final user = await ref
                           .read(userStateProvider.notifier)
                           .register(rawUser);
                       if (user.login.isNotEmpty && context.mounted) {
                         Navigator.pushNamed(
                           context,
-                          Pages.cvUpload,
+                          Pages.authHH,
                         );
                       }
                     } else if (selectedCitizenship == null) {
