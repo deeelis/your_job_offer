@@ -25,7 +25,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
         ref.watch(userStateProvider).valueOrNull ?? User.getEmptyUser();
     return Scaffold(
       appBar: AppBar(
-        title: Text('Профиль пользователя'),
+        title: const Text('Профиль пользователя'),
         actions: [
           IconButton(
               onPressed: () async {
@@ -36,10 +36,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                   );
 
               },
-              icon: Icon(Icons.edit)),
+              icon: const Icon(Icons.edit)),
           IconButton(
-              onPressed: () {
-                ref.read(userStateProvider.notifier).logout();
+              onPressed: () async {
+                await ref.read(userStateProvider.notifier).logout();
                 Navigator.pushNamedAndRemoveUntil(
                     context, Pages.home, (route) => false);
               },
@@ -53,7 +53,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             // Фото и информация о пользователе
             _buildProfileHeader(userProfile),
             _buildInfoRow(Icons.person, userProfile.login),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // Контактная информация
             _buildCard(
@@ -68,7 +68,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                 ],
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // Описание пользователя
             if (userProfile.description != null &&
@@ -77,11 +77,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                 title: 'О себе',
                 content: Text(
                   userProfile.description!,
-                  style: TextStyle(fontSize: 16),
+                  style: const TextStyle(fontSize: 16),
                 ),
               ),
 
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
                 onPressed: () {
                   Navigator.pushNamed(context, Pages.userVacancies);
@@ -103,10 +103,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               backgroundImage: NetworkImage(
                   'https://t4.ftcdn.net/jpg/02/29/75/83/360_F_229758328_7x8jwCwjtBMmC6rgFzLFhZoEpLobB6L8.jpg'),
             ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Text(
             '${userProfile.firstName ?? ''} ${userProfile.lastName ?? ''} ${userProfile.middleName ?? ''}',
-            style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
           ),
         ],
       ),
@@ -150,61 +150,5 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
         ],
       ),
     );
-    // return Scaffold(
-    //     appBar: AppBar(
-    //       title: const Text('Профиль'),
-    //       actions: [
-    //         IconButton(onPressed: (){
-    //           Navigator.pushNamed(context, Pages.form,
-    //               arguments: FormArguments(user: user, isEdit: true),);
-    //         }, icon: Icon(Icons.edit)),
-    //         IconButton(
-    //             onPressed: () {
-    //               ref.read(userStateProvider.notifier).logout();
-    //               Navigator.pushNamedAndRemoveUntil(
-    //                   context, Pages.home, (route) => false);
-    //             },
-    //             icon: const Icon(Icons.logout))
-    //       ],
-    //     ),
-    //     body: SingleChildScrollView(
-    //       child: Center(
-    //         child: Column(
-    //           children: [
-    //             Padding(
-    //               padding: const EdgeInsets.all(8.0),
-    //               child: Text('Логин: ${user.login}'),
-    //             ),
-    //             const Divider(),
-    //             Padding(
-    //               padding: const EdgeInsets.all(8.0),
-    //               child: Text(
-    //                   "ФИО:${user.lastName} ${user.firstName} ${user.middleName ?? ''}"),
-    //             ),
-    //             const Divider(),
-    //             Padding(
-    //               padding: const EdgeInsets.all(8.0),
-    //               child: Text('Дата рождения: ${user.birthDate}'),
-    //             ),
-    //             const Divider(),
-    //             Padding(
-    //               padding: const EdgeInsets.all(8.0),
-    //               child: Text('Email: ${user.email}'),
-    //             ),
-    //             const Divider(),
-    //             Padding(
-    //               padding: const EdgeInsets.all(8.0),
-    //               child: Text('Телефон: ${user.phone}'),
-    //             ),
-    //             const Divider(),
-    //             ElevatedButton(
-    //                 onPressed: () {
-    //                   Navigator.pushNamed(context, Pages.userVacancies);
-    //                 },
-    //                 child: const Text('Мои вакансии'))
-    //           ],
-    //         ),
-    //       ),
-    //     ));
   }
 }

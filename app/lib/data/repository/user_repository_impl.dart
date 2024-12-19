@@ -61,6 +61,7 @@ class UserRepositoryImpl implements UserRepository {
 
   @override
   Future<List<Vacancy>> getStatus(User user) async {
-    return await userDao.getStatus(user);
+    List<Vacancy> list = await userDao.getStatus(user);
+    return list;
   }
 }

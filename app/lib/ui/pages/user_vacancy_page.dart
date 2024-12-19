@@ -6,7 +6,6 @@ import 'package:your_job_offer/ui/widgets/user_vacancy_tile.dart';
 
 import '../../domain/model/user.dart';
 import '../../domain/model/vacancy.dart';
-import '../providers/vacancies/vacancies_provider.dart';
 
 class UserVacancyPage extends ConsumerStatefulWidget {
   const UserVacancyPage({super.key});
@@ -29,7 +28,6 @@ class _UserVacancyPageState extends ConsumerState<UserVacancyPage> {
   @override
   Widget build(BuildContext context) {
     var user = ref.watch(userStateProvider).valueOrNull ?? User.getEmptyUser();
-    // final vacancies = ref.watch(vacanciesStatusStateProvider).valueOrNull ?? [];
     return Scaffold(
       appBar: AppBar(
         title: const Text("Vacancies"),

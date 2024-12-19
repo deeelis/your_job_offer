@@ -6,6 +6,7 @@ import 'package:your_job_offer/ui/providers/user/user_provider.dart';
 
 import '../../domain/model/user.dart';
 import '../../main.dart';
+import '../../utils/methods.dart';
 
 class RegistrationPage extends ConsumerStatefulWidget {
   const RegistrationPage({super.key});
@@ -151,14 +152,18 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                         birthDate: DateTime.tryParse(_dateController.text),
                         citizenship: selectedCitizenship,
                       );
-                      final user = await ref
-                          .read(userStateProvider.notifier)
-                          .register(rawUser);
-                      if (user.login.isNotEmpty && context.mounted) {
-                        Navigator.pushNamed(
-                          context,
-                          Pages.authHH,
-                        );
+                      try {
+                        final user = await ref
+                            .read(userStateProvider.notifier)
+                            .register(rawUser);
+                        if (user.login.isNotEmpty && context.mounted) {
+                          Navigator.pushNamed(
+                            context,
+                            Pages.authHH,
+                          );
+                        }
+                      } on Exception catch (e) {
+                        showError(e, context);
                       }
                     } else if (selectedCitizenship == null) {
                       ScaffoldMessenger.of(context).showSnackBar(

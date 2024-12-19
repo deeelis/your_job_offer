@@ -8,7 +8,8 @@ import '../../domain/model/enums.dart';
 import '../../domain/model/general.dart';
 import '../../domain/model/user.dart';
 import '../../main.dart';
-import '../../utils.dart';
+import '../../utils/methods.dart';
+import '../../utils/utils.dart';
 
 class FormPage extends ConsumerStatefulWidget {
   const FormPage(this.args, {super.key});
@@ -160,10 +161,21 @@ class _FormPageState extends ConsumerState<FormPage> {
       user.projects=projects;
       print(user.professionalRole?.name);
       if(!widget.args.isEdit) {
-        await ref.read(userStateProvider.notifier).uploadForm(user);
+        try {
+          await ref.read(userStateProvider.notifier).uploadForm(user);
+        } on Exception catch (e) {
+          print('400');
+          showError(e, context);
+          return;
+        }
       }
       else{
-        await ref.read(userStateProvider.notifier).updateForm(user);
+        try {
+          await ref.read(userStateProvider.notifier).updateForm(user);
+        } on Exception catch (e) {
+          showError(e, context);
+          return;
+        }
       }
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -524,8 +536,8 @@ class _FormPageState extends ConsumerState<FormPage> {
             DropdownMenuItem(value: value, child: Text(toStringValue(value))))
         .toList();
     items.add(const DropdownMenuItem(
-      child: Text("-"),
       value: null,
+      child: Text("-"),
     ));
     return DropdownButtonFormField<T>(
       decoration: InputDecoration(labelText: label),

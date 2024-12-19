@@ -5,10 +5,10 @@ import 'package:your_job_offer/ui/providers/user/user_provider.dart';
 import 'package:your_job_offer/ui/providers/vacancies/vacancies_provider.dart';
 import 'package:your_job_offer/ui/widgets/user_vacancy_tile.dart';
 
-import '../../core/providers.dart';
 import '../../domain/model/enums.dart';
 import '../../domain/model/user.dart';
 import '../../domain/model/vacancy.dart';
+import '../../utils/methods.dart';
 
 class VacancyDetailsPage extends ConsumerStatefulWidget {
   const VacancyDetailsPage({required this.vacancy, super.key});
@@ -49,12 +49,14 @@ class _VacancyDetailsPageState extends ConsumerState<VacancyDetailsPage> {
         }
 
 
-    } catch (e) {
+    } on Exception catch (e) {
+
       if(mounted) {
         setState(() {
         isApplying = false;
         errorMessage = "Ошибка подключения: ${e.toString()}";
       });
+        showError(e, context);
       }
     }
   }
@@ -197,7 +199,7 @@ class _VacancyDetailsPageState extends ConsumerState<VacancyDetailsPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(getStatusIcon(vacancy.status!)),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Text(
                       getStatusText(vacancy.status!),
                     ),

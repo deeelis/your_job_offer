@@ -9,6 +9,7 @@ import 'package:your_job_offer/ui/providers/user/user_provider.dart';
 
 import '../../domain/model/user.dart';
 import '../../main.dart';
+import '../../utils/methods.dart';
 import 'form_page.dart';
 
 class CVUploadPage extends ConsumerStatefulWidget {
@@ -44,44 +45,52 @@ class _CVUploadPageState extends ConsumerState<CVUploadPage> {
       return;
     }
 
-    final request = http.MultipartRequest(
-      'POST',
-      Uri.parse('http://94.103.183.30:8080/upload'),
-    );
-    request.files.add(
-      await http.MultipartFile.fromPath('file', selectedFile!.path),
-    );
-    request.headers['Content-Type'] = 'application/pdf';
-    request.headers['Accept'] = 'application/json';
-    request.fields['login'] = user.login;
-    request.fields['password'] = user.password;
-
-    final response = await http.Response.fromStream(await request.send());
-
-    if (response.statusCode == 200) {
-      try {
-        final userModel = await _parseResponse(response);
-        setState(() {
-          _userModel = userModel;
-        });
-      } catch (e) {
-        _showError('Failed to parse user data: $e');
-      }
-      print(_userModel?.toJson().toString());
-      ref.read(userStateProvider.notifier).updateUser(_userModel?? User.getEmptyUser());
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('File uploaded successfully!')),
-        );
-        Navigator.pushNamed(context, Pages.form,
-            arguments: FormArguments(user: _userModel?? User.getEmptyUser()));
-      }
-    } else {
-      if(mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('File upload failed.')),
+    try {
+      final request = http.MultipartRequest(
+        'POST',
+        Uri.parse('http://94.103.183.30:8080/upload'),
       );
+      request.files.add(
+        await http.MultipartFile.fromPath('file', selectedFile!.path),
+      );
+      request.headers['Content-Type'] = 'application/pdf';
+      request.headers['Accept'] = 'application/json';
+      request.fields['login'] = user.login;
+      request.fields['password'] = user.password;
+
+      final response = await http.Response.fromStream(await request.send());
+      checkResponse(response);
+      if (response.statusCode == 200) {
+        try {
+          final userModel = await _parseResponse(response);
+          setState(() {
+            _userModel = userModel;
+          });
+        } catch (e) {
+          _showError('Failed to parse user data: $e');
+        }
+        print(_userModel?.toJson().toString());
+        try {
+          await ref.read(userStateProvider.notifier).updateUser(_userModel?? User.getEmptyUser());
+        } on Exception catch  (e) {
+          showError(e, context);
+        }
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('File uploaded successfully!')),
+          );
+          Navigator.pushNamed(context, Pages.form,
+              arguments: FormArguments(user: _userModel?? User.getEmptyUser()));
+        }
+      } else {
+        if(mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('File upload failed.')),
+        );
+        }
       }
+    } on Exception catch (e) {
+      showError(e, context);
     }
   }
 

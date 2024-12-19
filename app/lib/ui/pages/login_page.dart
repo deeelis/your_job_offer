@@ -4,6 +4,7 @@ import 'package:your_job_offer/ui/providers/user/user_provider.dart';
 
 import '../../domain/model/user.dart';
 import '../../main.dart';
+import '../../utils/methods.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -53,15 +54,20 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               ElevatedButton(
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
-                    final response =
-                        await ref.read(userStateProvider.notifier).login(User(
-                              login: _loginController.text,
-                              password: _passwordController.text,
-                            ));
-                    print('Логин: ${_loginController.text}');
-                    print('Пароль: ${_passwordController.text}');
-                    if (response != User.getEmptyUser()) {
-                      Navigator.pushReplacementNamed(context, Pages.home);
+                    try {
+                      final response =
+                          await ref.read(userStateProvider.notifier).login(User(
+                                login: _loginController.text,
+                                password: _passwordController.text,
+                              ));
+
+                      print('Логин: ${_loginController.text}');
+                      print('Пароль: ${_passwordController.text}');
+                      if (response != User.getEmptyUser()) {
+                        Navigator.pushReplacementNamed(context, Pages.home);
+                      }
+                    } on Exception catch (e) {
+                      showError(e, context);
                     }
                   }
                 },

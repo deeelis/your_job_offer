@@ -241,8 +241,8 @@ class DialogEditFilterState extends ConsumerState<DialogEditFilter> {
         )))
         .toList();
     items.add(const DropdownMenuItem(
-      child: Text("-"),
       value: null,
+      child: Text("-"),
     ));
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),

@@ -5,6 +5,7 @@ import 'package:your_job_offer/ui/providers/user/user_provider.dart';
 import 'package:your_job_offer/ui/providers/vacancies/vacancies_provider.dart';
 
 import '../../domain/model/user.dart';
+import '../../utils/methods.dart';
 import 'login_page.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -26,7 +27,11 @@ class _HomePageState extends ConsumerState<HomePage> {
     if (user.login.isEmpty) {
       return const LoginPage();
     } else {
-      ref.read(vacanciesStateProvider.notifier).getVacancies(user);
+      try {
+        ref.read(vacanciesStateProvider.notifier).getVacancies(user);
+      } on Exception catch (e) {
+        showError(e, context);
+      }
       return const VacancyPage();
     }
   }

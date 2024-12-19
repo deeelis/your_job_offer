@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:your_job_offer/core/providers.dart';
 import 'package:your_job_offer/domain/model/enums.dart';
 import 'package:your_job_offer/main.dart';
-import 'package:your_job_offer/ui/providers/vacancies/vacancies_provider.dart';
-import 'package:your_job_offer/ui/widgets/user_vacancy_tile.dart';
 
-import '../../domain/model/general.dart';
 import '../../domain/model/user.dart';
 import '../../domain/model/vacancy.dart';
 
@@ -51,7 +47,7 @@ class _VacancyTileState extends ConsumerState<VacancyTile> {
         onPressed: () async {
         },
         icon:  Icon(icon),
-      ):SizedBox.shrink(),
+      ):const SizedBox.shrink(),
       onTap: (){
         Navigator.pushNamed(context, Pages.details, arguments: widget.vacancy);
       },

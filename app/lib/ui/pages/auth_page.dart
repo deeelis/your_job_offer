@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:your_job_offer/ui/providers/user/user_provider.dart';
+import 'package:your_job_offer/utils/methods.dart';
 import 'dart:convert';
 
 import '../../domain/model/user.dart';
@@ -76,7 +77,6 @@ class _AuthPageState extends ConsumerState<AuthPage> {
           'code': code,
         },
       );
-
       if (response.statusCode == 200) {
         final Map<String, dynamic> tokenData = json.decode(response.body);
         setState(() {
@@ -91,11 +91,12 @@ class _AuthPageState extends ConsumerState<AuthPage> {
           Uri.parse(backendUrl),
           headers: {'Content-Type': 'application/json'},
           body: json.encode({
-            'login': user.login, // нужно доставать откуда-то логин
+            'login': user.login,
             'access': accessToken,
             'refresh': refreshToken,
           }),
         );
+        checkResponse(backendResponse);
 
         if (backendResponse.statusCode == 200) {
           print("Токены успешно отправлены на бэкенд");
@@ -105,8 +106,8 @@ class _AuthPageState extends ConsumerState<AuthPage> {
       } else {
         print("Ошибка получения токена: ${response.body}");
       }
-    } catch (e) {
-      print("Произошла ошибка: $e");
+    } on Exception catch  (e) {
+      showError(e, context);
     }
   }
 

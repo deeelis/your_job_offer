@@ -1,5 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:your_job_offer/domain/model/vacancy.dart';
 
 import 'enums.dart';
 import 'general.dart';
@@ -78,8 +77,10 @@ class User {
   List<Skill>? skills;
   @JsonKey(name: 'languages')
   List<Language>? languages;
-  @JsonKey(name: 'vacancies')
-  List<Vacancy>? vacancies;
+  @JsonKey(name: 'status')
+  List<Status>? statuses;
+  // @JsonKey(name: 'vacancies')
+  // List<Vacancy>? vacancies;
 
   User({
     this.id,
@@ -117,7 +118,8 @@ class User {
     this.educations = const [],
     this.skills = const [],
     this.languages = const [],
-    this.vacancies = const [],
+    this.statuses = const [],
+    // this.vacancies = const [],
   });
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);

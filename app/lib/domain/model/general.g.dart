@@ -143,7 +143,9 @@ Map<String, dynamic> _$EducationToJson(Education instance) => <String, dynamic>{
 
 Status _$StatusFromJson(Map<String, dynamic> json) => Status(
       id: (json['id'] as num?)?.toInt(),
-      vacancyId: (json['vacancy_id'] as num?)?.toInt(),
+      vacancy: json['vacancy'] == null
+          ? null
+          : Vacancy.fromJson(json['vacancy'] as Map<String, dynamic>),
       deadline: json['deadline'] as String?,
       date: json['date'] as String?,
       message: json['message'] as String?,
@@ -152,7 +154,7 @@ Status _$StatusFromJson(Map<String, dynamic> json) => Status(
 
 Map<String, dynamic> _$StatusToJson(Status instance) => <String, dynamic>{
       'id': instance.id,
-      'vacancy_id': instance.vacancyId,
+      'vacancy': instance.vacancy?.toJson(),
       'deadline': instance.deadline,
       'date': instance.date,
       'message': instance.message,

@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:your_job_offer/domain/model/vacancy.dart';
 
 import 'enums.dart';
 
@@ -241,8 +242,8 @@ class Education {
 class Status {
   @JsonKey(name: 'id')
   int? id;
-  @JsonKey(name: 'vacancy_id')
-  int? vacancyId;
+  @JsonKey(name: 'vacancy')
+  Vacancy? vacancy;
   @JsonKey(name: 'deadline')
   String? deadline;
   @JsonKey(name: 'date')
@@ -254,7 +255,7 @@ class Status {
 
   Status({
     this.id,
-    this.vacancyId,
+    this.vacancy,
     this.deadline,
     this.date,
     this.message,

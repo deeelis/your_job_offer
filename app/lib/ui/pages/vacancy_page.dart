@@ -5,10 +5,10 @@ import 'package:your_job_offer/ui/providers/user/user_provider.dart';
 import 'package:your_job_offer/ui/providers/vacancies/filters_provider.dart';
 import 'package:your_job_offer/ui/providers/vacancies/vacancies_provider.dart';
 
-import '../../core/providers.dart';
 import '../../domain/model/user.dart';
 import '../../domain/model/vacancy.dart';
 import '../../main.dart';
+import '../../utils/methods.dart';
 import '../widgets/filters.dart';
 import '../widgets/vacancy_tile.dart';
 
@@ -93,30 +93,42 @@ class _VacancyPageState extends ConsumerState<VacancyPage> {
               children: [
                 ElevatedButton(
                   onPressed: () async {
-                    await ref
-                        .read(vacanciesStateProvider.notifier)
-                        .getVacancies(user);
-                    setState(() {});
+                    try {
+                      await ref
+                          .read(vacanciesStateProvider.notifier)
+                          .getVacancies(user);
+                      setState(() {});
+                    } on Exception catch (e) {
+                      showError(e, context);
+                    }
+
                   },
                   child: const Text('Find Jobs'),
                 ),
                 ElevatedButton(
                   onPressed: () async {
-                    int index=0;
+                    int index=0;try {
                     for (Vacancy vacancy in vacancies) {
                       setState(() {
                         isApplyingLoading.add(true);
                       });
-                      bool result=await ref
-                          .read(vacanciesStateProvider.notifier)
-                          .responseToTheVacancy(user, vacancy);
-                      if(result){
-                        index++;
-                      }
+
+                        bool result=await ref
+                            .read(vacanciesStateProvider.notifier)
+                            .responseToTheVacancy(user, vacancy);
+                        if(result){
+                          index++;
+                        }
+
                       setState(() {
                         isApplyingLoading.last=false;
                       });
 
+                    }
+                    } on Exception catch (e) {
+                      if (mounted) {
+                        showError(e, context);
+                      }
                     }
                     showDialog(
                       context: context,

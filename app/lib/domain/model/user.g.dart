@@ -74,8 +74,8 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
               ?.map((e) => Language.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
-      vacancies: (json['vacancies'] as List<dynamic>?)
-              ?.map((e) => Vacancy.fromJson(e as Map<String, dynamic>))
+      statuses: (json['status'] as List<dynamic>?)
+              ?.map((e) => Status.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
     );
@@ -118,7 +118,7 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'educations': instance.educations?.map((e) => e.toJson()).toList(),
       'skills': instance.skills?.map((e) => e.toJson()).toList(),
       'languages': instance.languages?.map((e) => e.toJson()).toList(),
-      'vacancies': instance.vacancies?.map((e) => e.toJson()).toList(),
+      'status': instance.statuses?.map((e) => e.toJson()).toList(),
     };
 
 const _$GenderEnumEnumMap = {
